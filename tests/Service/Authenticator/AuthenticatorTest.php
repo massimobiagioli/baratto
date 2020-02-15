@@ -31,17 +31,20 @@ class AuthenticatorTest extends TestCase
         $this->authenticator = new AuthenticatorInternal($this->objectManager);
     }
 
-    public function testAuthenticateValidCredentials()
+    public function testLoginValidCredentials()
     {
         $email = 'roger.green@gmail.com';
         $password = 'Zxc123.';
-        $this->assertTrue($this->authenticator->authenticate($email, $password));
+        $accessToken = $this->authenticator->login($email, $password);
+        $this->assertNotNull($accessToken);
     }
 
-    public function testAuthenticateWrongCredentials()
+    public function testLoginWrongCredentials()
     {
         $email = 'roger.green@gmail.com';
         $password = 'thisIsAWrongPassword!';
-        $this->assertFalse($this->authenticator->authenticate($email, $password));
+        $this->expectException(\Exception::class);
+        $this->authenticator->login($email, $password);
     }
+    
 }
