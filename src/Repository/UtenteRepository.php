@@ -3,8 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\Utente;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @method Utente|null find($id, $lockMode = null, $lockVersion = null)

@@ -7,5 +7,5 @@ use App\Service\Authenticator\AccessToken;
 interface AuthenticatorInterface
 {
     public function login(string $email, string $password): AccessToken;
-    public function logout(AccessToken $accessToken): bool;
+    public function logout(string $accessToken): bool;
 }
