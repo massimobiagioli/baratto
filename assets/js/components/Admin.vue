@@ -74,8 +74,9 @@ export default {
         'nome': this.nome,
         'monete': this.monete
       };
-      let articolo = await barattoApiClient.listArticoli(this.accessToken, articolo);
+      let articolo = await barattoApiClient.listArticoli(this.accessToken, articolo);      
       console.log(articolo);
+      await this.listArticoli();
     },
     async updateArticolo(id) {                  
       let articolo = {
@@ -84,10 +85,12 @@ export default {
       };
       let articolo = await barattoApiClient.listArticoli(this.accessToken, id, articolo);
       console.log(articolo);
+      await this.listArticoli();
     },
     async deleteArticolo(id) {          
       await barattoApiClient.deleteArticolo(this.accessToken, id);      
       console.log('deleted');
+      await this.listArticoli();
     }
   },
   computed: {
