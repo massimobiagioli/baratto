@@ -1,16 +1,30 @@
 <template>
-  <div>
-    <h3>Login</h3>
-    <div>
-      <span>Email:</span>
-      <input type="text" v-model="email" />
-    </div>
-    <div>
-      <span>Password:</span>
-      <input type="password" v-model="password" />
-    </div>
-    <div>
-      <button @click="login()">Login</button>
+  <div class="row">
+    <div class="col s12 m6">
+      <div class="card">
+        <div class="card-content">
+          <span class="card-title">Login</span>
+          <div class="row">
+            <form class="col s12">
+              <div class="row">
+                <div class="input-field col s12">
+                  <input id="email" type="email" class="validate" v-model="email">
+                  <label for="email">Email</label>
+                </div>
+              </div>
+              <div class="row">
+                <div class="input-field col s12">
+                  <input id="password" type="password" class="validate" v-model="password">
+                  <label for="password">Password</label>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="card-action">
+          <a class="waves-effect waves-light btn" @click="login()">login</a>
+        </div>
+      </div>
     </div>
   </div>
 </template>
