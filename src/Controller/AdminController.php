@@ -2,8 +2,9 @@
 
 namespace App\Controller;
 
-use App\Service\Authenticator\AuthenticatorInterface;
+use App\Entity\Articolo;
 use App\Service\Admin\AdminInterface;
+use App\Service\Authenticator\AuthenticatorInterface;
 use Swagger\Annotations as SWG;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -17,9 +18,8 @@ class AdminController extends AbstractController
     private $adminService;
 
     public function __construct(
-        AuthenticatorInterface $authenticator, 
-        AdminInterface $adminService)
-    {
+        AuthenticatorInterface $authenticator,
+        AdminInterface $adminService) {
         $this->authenticator = $authenticator;
         $this->adminService = $adminService;
     }
@@ -27,14 +27,14 @@ class AdminController extends AbstractController
     /**
      * @Route("/api/admin/articoli", methods={"GET"})
      * @SWG\Get(
-     *  path="/api/admin/articoli",  
+     *  path="/api/admin/articoli",
      *  summary="Elenco articoli",
      *  @SWG\Parameter(
      *    name="X-AUTH-TOKEN",
      *    in="header",
-     *    required=true,   
+     *    required=true,
      *    type="string"
-     *  ), 
+     *  ),
      *  @SWG\Response(
      *     response=200,
      *     @SWG\Schema(
@@ -46,51 +46,51 @@ class AdminController extends AbstractController
      *  ),
      *  @SWG\Response(
      *     response=400,
-     *     description="BAD REQUEST"     
+     *     description="BAD REQUEST"
      *  ),
      *  @SWG\Response(
      *     response=401,
-     *     description="UNAUTHORIZED"     
+     *     description="UNAUTHORIZED"
      *  )
      * )
      */
     public function listArticoli(Request $request)
-    {           
+    {
         try {
             $tokenKey = $request->headers->get('X-AUTH-TOKEN');
             $accessToken = $this->authenticator->verify($tokenKey);
             if (!$accessToken->getAllowAdmin()) {
                 return new Response('Accesso ad area amministratore non consentita', 401);
             }
-        } catch (\Exception $e) {   
+        } catch (\Exception $e) {
             return new Response($e->getMessage(), 401);
         }
 
         try {
             $articoli = $this->adminService->listArticoli();
-            return new JsonResponse($this->serializeArticoliToArray($articoli));    
+            return new JsonResponse($this->serializeArticoliToArray($articoli));
         } catch (\Exception $e) {
             return new Response($e->getMessage(), 500);
-        }  
+        }
     }
 
     /**
      * @Route("/api/admin/articoli/{id}", methods={"GET"}, requirements={"id"="\d+"})
      * @SWG\Get(
-     *  path="/api/admin/articoli/{id}",  
+     *  path="/api/admin/articoli/{id}",
      *  summary="get Articolo by ID",
      *  @SWG\Parameter(
      *    name="X-AUTH-TOKEN",
      *    in="header",
-     *    required=true,   
+     *    required=true,
      *    type="string"
-     *  ), 
+     *  ),
      *  @SWG\Parameter(
      *    name="id",
      *    in="path",
-     *    required=true,   
+     *    required=true,
      *    type="integer"
-     *  ), 
+     *  ),
      *  @SWG\Response(
      *     response=200,
      *     @SWG\Schema(
@@ -98,15 +98,15 @@ class AdminController extends AbstractController
      *          property="articolo",
      *          description="Articolo"
      *        )
-     *     ) 
+     *     )
      *  ),
      *  @SWG\Response(
      *     response=400,
-     *     description="BAD REQUEST"     
+     *     description="BAD REQUEST"
      *  ),
      *  @SWG\Response(
      *     response=401,
-     *     description="UNAUTHORIZED"     
+     *     description="UNAUTHORIZED"
      *  )
      * )
      */
@@ -118,13 +118,13 @@ class AdminController extends AbstractController
             if (!$accessToken->getAllowAdmin()) {
                 return new Response('Accesso ad area amministratore non consentita', 401);
             }
-        } catch (\Exception $e) {   
+        } catch (\Exception $e) {
             return new Response($e->getMessage(), 401);
         }
 
         try {
             $articolo = $this->adminService->getArticolo($id);
-            return new JsonResponse($this->$this->serializeArticoloToArray($articolo));  
+            return new JsonResponse($this->serializeArticoloToArray($articolo));
         } catch (\Exception $e) {
             return new Response($e->getMessage(), 500);
         }
@@ -133,12 +133,12 @@ class AdminController extends AbstractController
     /**
      * @Route("/api/admin/articoli", methods={"POST"})
      * @SWG\Post(
-     *  path="/api/admin/articoli",  
+     *  path="/api/admin/articoli",
      *  summary="Inserimento articolo",
      *  @SWG\Parameter(
      *    name="X-AUTH-TOKEN",
      *    in="header",
-     *    required=true,   
+     *    required=true,
      *    type="string"
      *  ),
      *  @SWG\Response(
@@ -152,11 +152,11 @@ class AdminController extends AbstractController
      *  ),
      *  @SWG\Response(
      *     response=400,
-     *     description="BAD REQUEST"     
+     *     description="BAD REQUEST"
      *  ),
      *  @SWG\Response(
      *     response=401,
-     *     description="UNAUTHORIZED"     
+     *     description="UNAUTHORIZED"
      *  )
      * )
      */
@@ -168,13 +168,13 @@ class AdminController extends AbstractController
             if (!$accessToken->getAllowAdmin()) {
                 return new Response('Accesso ad area amministratore non consentita', 401);
             }
-        } catch (\Exception $e) {   
+        } catch (\Exception $e) {
             return new Response($e->getMessage(), 401);
         }
 
         $toInsert = json_decode($request->getContent(), true);
         if (!$toInsert) {
-            return new Response('No login credentials specified', 400);
+            return new Response('Dati da inserire non validi', 400);
         }
         if (!isset($toInsert['nome'])) {
             return new Response('Nome non specificato', 400);
@@ -183,11 +183,11 @@ class AdminController extends AbstractController
             return new Response('Monete non specificate', 400);
         }
         $articolo = new Articolo();
-        $articolo->setNome($toUpdate['nome']);
-        $articolo->setMonete($toUpdate['monete']);
+        $articolo->setNome($toInsert['nome']);
+        $articolo->setMonete($toInsert['monete']);
         try {
-            $articolo = $this->adminService->insert($articolo);
-            return new JsonResponse($this->$this->serializeArticoloToArray($articolo));   
+            $newArticolo = $this->adminService->insertArticolo($articolo);
+            return new JsonResponse($this->serializeArticoloToArray($newArticolo));
         } catch (\Exception $e) {
             return new Response($e->getMessage(), 500);
         }
@@ -196,20 +196,20 @@ class AdminController extends AbstractController
     /**
      * @Route("/api/admin/articoli/{id}", methods={"PUT"}, requirements={"id"="\d+"})
      * @SWG\Put(
-     *  path="/api/admin/articoli/{id}",  
+     *  path="/api/admin/articoli/{id}",
      *  summary="Inserimento articolo",
      *  @SWG\Parameter(
      *    name="X-AUTH-TOKEN",
      *    in="header",
-     *    required=true,   
+     *    required=true,
      *    type="string"
      *  ),
      *  @SWG\Parameter(
      *    name="id",
      *    in="path",
-     *    required=true,   
+     *    required=true,
      *    type="integer"
-     *  ), 
+     *  ),
      *  @SWG\Response(
      *     response=200,
      *     @SWG\Schema(
@@ -221,15 +221,15 @@ class AdminController extends AbstractController
      *  ),
      *  @SWG\Response(
      *     response=400,
-     *     description="BAD REQUEST"     
+     *     description="BAD REQUEST"
      *  ),
      *  @SWG\Response(
      *     response=401,
-     *     description="UNAUTHORIZED"     
+     *     description="UNAUTHORIZED"
      *  )
      * )
      */
-    public function updateArticolo(Request $request)
+    public function updateArticolo(Request $request, int $id)
     {
         try {
             $tokenKey = $request->headers->get('X-AUTH-TOKEN');
@@ -237,7 +237,7 @@ class AdminController extends AbstractController
             if (!$accessToken->getAllowAdmin()) {
                 return new Response('Accesso ad area amministratore non consentita', 401);
             }
-        } catch (\Exception $e) {   
+        } catch (\Exception $e) {
             return new Response($e->getMessage(), 401);
         }
 
@@ -255,8 +255,8 @@ class AdminController extends AbstractController
         $oldArticolo->setNome($toUpdate['nome']);
         $oldArticolo->setMonete($toUpdate['monete']);
         try {
-            $articolo = $this->adminService->update($id, $oldArticolo);
-            return new JsonResponse($this->$this->serializeArticoloToArray($articolo));   
+            $articolo = $this->adminService->updateArticolo($id, $oldArticolo);
+            return new JsonResponse($this->serializeArticoloToArray($articolo));
         } catch (\Exception $e) {
             return new Response($e->getMessage(), 500);
         }
@@ -264,36 +264,36 @@ class AdminController extends AbstractController
 
     /**
      * @Route("/api/admin/articoli/{id}", methods={"DELETE"}, requirements={"id"="\d+"})
-      * @SWG\Delete(
-     *  path="/api/admin/articoli/{id}",  
+     * @SWG\Delete(
+     *  path="/api/admin/articoli/{id}",
      *  summary="Inserimento articolo",
      *  @SWG\Parameter(
      *    name="X-AUTH-TOKEN",
      *    in="header",
-     *    required=true,   
+     *    required=true,
      *    type="string"
      *  ),
      *  @SWG\Parameter(
      *    name="id",
      *    in="path",
-     *    required=true,   
+     *    required=true,
      *    type="integer"
-     *  ), 
+     *  ),
      *  @SWG\Response(
      *     response=200,
      *     description="OK"
      *  ),
      *  @SWG\Response(
      *     response=400,
-     *     description="BAD REQUEST"     
+     *     description="BAD REQUEST"
      *  ),
      *  @SWG\Response(
      *     response=401,
-     *     description="UNAUTHORIZED"     
+     *     description="UNAUTHORIZED"
      *  )
      * )
      */
-    public function deleteArticolo(Request $request)
+    public function deleteArticolo(Request $request, int $id)
     {
         try {
             $tokenKey = $request->headers->get('X-AUTH-TOKEN');
@@ -301,10 +301,10 @@ class AdminController extends AbstractController
             if (!$accessToken->getAllowAdmin()) {
                 return new Response('Accesso ad area amministratore non consentita', 401);
             }
-        } catch (\Exception $e) {   
+        } catch (\Exception $e) {
             return new Response($e->getMessage(), 401);
         }
-        
+
         try {
             $this->adminService->deleteArticolo($id);
             return new Response('');
@@ -313,15 +313,17 @@ class AdminController extends AbstractController
         }
     }
 
-    private function serializeArticoloToArray($articolo) {
+    private function serializeArticoloToArray($articolo)
+    {
         return [
             'id' => $articolo->getId(),
             'nome' => $articolo->getNome(),
-            'monete' => $articolo->getMonete()
+            'monete' => $articolo->getMonete(),
         ];
     }
 
-    private function serializeArticoliToArray($articoli) {
+    private function serializeArticoliToArray($articoli)
+    {
         $ret = [];
         foreach ($articoli as $articolo) {
             $ret[] = $this->serializeArticoloToArray($articolo);
@@ -329,4 +331,4 @@ class AdminController extends AbstractController
         return $ret;
     }
 
-}   
+}

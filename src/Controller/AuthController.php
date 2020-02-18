@@ -111,7 +111,7 @@ class AuthController extends AbstractController
     {
         $accessToken = $request->get('accessToken');
         if (empty($accessToken)) {
-            return new Response('No access token specified', 400);
+            return new Response('Token non specificato', 400);
         }
 
         try {

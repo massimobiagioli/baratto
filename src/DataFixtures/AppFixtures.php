@@ -87,11 +87,6 @@ class AppFixtures extends Fixture
         $articolo->setMonete(8);
         $articoli[] = $articolo;
 
-        $articolo = new Articolo();
-        $articolo->setNome('');
-        $articolo->setMonete(10);
-        $articoli[] = $articolo;
-
         return $articoli;
     }
 
