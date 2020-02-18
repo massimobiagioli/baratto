@@ -37,6 +37,7 @@ class AdminController extends AbstractController
      *  ),
      *  @SWG\Response(
      *     response=200,
+     *     description="OK", 
      *     @SWG\Schema(
      *        @SWG\Property(
      *          property="articoli",
@@ -93,6 +94,7 @@ class AdminController extends AbstractController
      *  ),
      *  @SWG\Response(
      *     response=200,
+     *     description="OK",
      *     @SWG\Schema(
      *        @SWG\Property(
      *          property="articolo",
@@ -143,6 +145,7 @@ class AdminController extends AbstractController
      *  ),
      *  @SWG\Response(
      *     response=201,
+     *     description="CREATED",
      *     @SWG\Schema(
      *        @SWG\Property(
      *          property="articolo",
@@ -197,7 +200,7 @@ class AdminController extends AbstractController
      * @Route("/api/admin/articoli/{id}", methods={"PUT"}, requirements={"id"="\d+"})
      * @SWG\Put(
      *  path="/api/admin/articoli/{id}",
-     *  summary="Inserimento articolo",
+     *  summary="Modifica articolo",
      *  @SWG\Parameter(
      *    name="X-AUTH-TOKEN",
      *    in="header",
@@ -212,6 +215,7 @@ class AdminController extends AbstractController
      *  ),
      *  @SWG\Response(
      *     response=200,
+     *     description="OK", 
      *     @SWG\Schema(
      *        @SWG\Property(
      *          property="articolo",
@@ -266,7 +270,7 @@ class AdminController extends AbstractController
      * @Route("/api/admin/articoli/{id}", methods={"DELETE"}, requirements={"id"="\d+"})
      * @SWG\Delete(
      *  path="/api/admin/articoli/{id}",
-     *  summary="Inserimento articolo",
+     *  summary="Cancellazione articolo",
      *  @SWG\Parameter(
      *    name="X-AUTH-TOKEN",
      *    in="header",

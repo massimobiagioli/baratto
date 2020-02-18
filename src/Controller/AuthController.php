@@ -39,6 +39,7 @@ class AuthController extends AbstractController
      *  ), 
      *  @SWG\Response(
      *     response=200,
+     *     description="OK",
      *     @SWG\Schema(
      *        @SWG\Property(
      *          property="accessToken",
@@ -79,23 +80,18 @@ class AuthController extends AbstractController
 
     /**
      * @Route("/api/auth/logout", methods={"GET"})
-     * @SWG\Post(
-     *  path="/api/auth/login",  
+     * @SWG\Get(
+     *  path="/api/auth/logout",  
      *  summary="Logout applicativo",
      *  @SWG\Parameter(
-     *    name="credentials",
-     *    in="body",
-     *    required=true,   
-     *    type="array",
-     *       @SWG\Schema(
-     *          @SWG\Items(
-     *             @SWG\Property(type="string",property="email",description="email"),
-     *             @SWG\Property(type="string",property="password",description="password"), 
-     *          )
-     *       )
-     *  ), 
+     *    name="accessToken",
+     *    in="query",
+     *    required=true,
+     *    type="string"
+     *  ),
      *  @SWG\Response(
-     *     response=200
+     *     response=200,
+     *     description="OK"
      *  ),
      *  @SWG\Response(
      *     response=400,
