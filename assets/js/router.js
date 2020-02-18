@@ -1,10 +1,10 @@
-import Vue from 'vue'
-import Router from 'vue-router'
-import Login from './components/Login.vue'
-import Admin from './components/Admin.vue'
-import User from './components/User.vue'
+import Vue from 'vue';
+import Router from 'vue-router';
+import Login from './components/Login.vue';
+import Admin from './components/Admin.vue';
+import User from './components/User.vue';
 
-Vue.use(Router)
+Vue.use(Router);
 
 export default new Router({
   routes: [
@@ -17,9 +17,9 @@ export default new Router({
       name: 'Admin',
       component: Admin
     }, {
-      path: '/user',
+      path: '/',
       name: 'User',
       component: User
     }
   ]
-})
+});

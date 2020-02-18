@@ -30,21 +30,17 @@
 </template>
 
 <script>
-import BarattoApiClient from "../lib/baratto-api-client";
+import { mapActions } from 'vuex';
 export default {
+  name: "Login",
   data: () => ({
     email: "",
     password: ""
   }),
   methods: {
-    async login() {
-      const barattoApiClient = new BarattoApiClient();
-      let loginData = await barattoApiClient.login(this.email, this.password);
-
-      // TODO: memorizzare informazioni nello store
-
-      this.$router.push({ path: "/user" });
-    }
+    ...mapActions('auth', [
+      'login'
+    ])
   }
 };
 </script>
