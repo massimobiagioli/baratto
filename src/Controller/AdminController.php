@@ -26,9 +26,32 @@ class AuthController extends AbstractController
 
     /**
      * @Route("/api/admin/articoli", methods={"GET"})
-     * @SWG\Response(
+     * @SWG\Get(
+     *  path="/api/admin/articoli",  
+     *  summary="Elenco articoli",
+     *  @SWG\Parameter(
+     *    name="X-AUTH-TOKEN",
+     *    in="header",
+     *    required=true,   
+     *    type="string"
+     *  ), 
+     *  @SWG\Response(
      *     response=200,
-     *     description="Elenco articoli"
+     *     @SWG\Schema(
+     *        @SWG\Property(
+     *          property="articoli",
+     *          description="Elenco articoli"
+     *        )
+     *     )
+     *  ),
+     *  @SWG\Response(
+     *     response=400,
+     *     description="BAD REQUEST"     
+     *  ),
+     *  @SWG\Response(
+     *     response=401,
+     *     description="UNAUTHORIZED"     
+     *  )
      * )
      */
     public function listArticoli(Request $request)
@@ -53,9 +76,38 @@ class AuthController extends AbstractController
 
     /**
      * @Route("/api/admin/articoli/{id}", methods={"GET"}, requirements={"id"="\d+"})
-     * @SWG\Response(
+     * @SWG\Get(
+     *  path="/api/admin/articoli/{id}",  
+     *  summary="get Articolo by ID",
+     *  @SWG\Parameter(
+     *    name="X-AUTH-TOKEN",
+     *    in="header",
+     *    required=true,   
+     *    type="string"
+     *  ), 
+     *  @SWG\Parameter(
+     *    name="id",
+     *    in="path",
+     *    required=true,   
+     *    type="integer"
+     *  ), 
+     *  @SWG\Response(
      *     response=200,
-     *     description="Restituisce articolo in funzione del suo id"
+     *     @SWG\Schema(
+     *        @SWG\Property(
+     *          property="articolo",
+     *          description="Articolo"
+     *        )
+     *     ) 
+     *  ),
+     *  @SWG\Response(
+     *     response=400,
+     *     description="BAD REQUEST"     
+     *  ),
+     *  @SWG\Response(
+     *     response=401,
+     *     description="UNAUTHORIZED"     
+     *  )
      * )
      */
     public function getArticolo(Request $request, int $id)
@@ -80,9 +132,32 @@ class AuthController extends AbstractController
 
     /**
      * @Route("/api/admin/articoli", methods={"POST"})
-     * @SWG\Response(
+     * @SWG\Post(
+     *  path="/api/admin/articoli",  
+     *  summary="Inserimento articolo",
+     *  @SWG\Parameter(
+     *    name="X-AUTH-TOKEN",
+     *    in="header",
+     *    required=true,   
+     *    type="string"
+     *  ),
+     *  @SWG\Response(
      *     response=201,
-     *     description="Inserisce nuovo articolo"
+     *     @SWG\Schema(
+     *        @SWG\Property(
+     *          property="articolo",
+     *          description="Articolo creato"
+     *        )
+     *     )
+     *  ),
+     *  @SWG\Response(
+     *     response=400,
+     *     description="BAD REQUEST"     
+     *  ),
+     *  @SWG\Response(
+     *     response=401,
+     *     description="UNAUTHORIZED"     
+     *  )
      * )
      */
     public function insertArticolo(Request $request)
@@ -120,9 +195,38 @@ class AuthController extends AbstractController
 
     /**
      * @Route("/api/admin/articoli/{id}", methods={"UPDATE"}, requirements={"id"="\d+"})
-     * @SWG\Response(
+     * @SWG\Update(
+     *  path="/api/admin/articoli/{id}",  
+     *  summary="Inserimento articolo",
+     *  @SWG\Parameter(
+     *    name="X-AUTH-TOKEN",
+     *    in="header",
+     *    required=true,   
+     *    type="string"
+     *  ),
+     *  @SWG\Parameter(
+     *    name="id",
+     *    in="path",
+     *    required=true,   
+     *    type="integer"
+     *  ), 
+     *  @SWG\Response(
      *     response=200,
-     *     description="Aggiorna articolo dato il suo id"
+     *     @SWG\Schema(
+     *        @SWG\Property(
+     *          property="articolo",
+     *          description="Articolo modificato"
+     *        )
+     *     )
+     *  ),
+     *  @SWG\Response(
+     *     response=400,
+     *     description="BAD REQUEST"     
+     *  ),
+     *  @SWG\Response(
+     *     response=401,
+     *     description="UNAUTHORIZED"     
+     *  )
      * )
      */
     public function updateArticolo(Request $request)
@@ -160,9 +264,33 @@ class AuthController extends AbstractController
 
     /**
      * @Route("/api/admin/articoli/{id}", methods={"DELETE"}, requirements={"id"="\d+"})
-     * @SWG\Response(
+      * @SWG\Delete(
+     *  path="/api/admin/articoli/{id}",  
+     *  summary="Inserimento articolo",
+     *  @SWG\Parameter(
+     *    name="X-AUTH-TOKEN",
+     *    in="header",
+     *    required=true,   
+     *    type="string"
+     *  ),
+     *  @SWG\Parameter(
+     *    name="id",
+     *    in="path",
+     *    required=true,   
+     *    type="integer"
+     *  ), 
+     *  @SWG\Response(
      *     response=200,
-     *     description="Cancella articolo dato il suo id"
+     *     description="OK"
+     *  ),
+     *  @SWG\Response(
+     *     response=400,
+     *     description="BAD REQUEST"     
+     *  ),
+     *  @SWG\Response(
+     *     response=401,
+     *     description="UNAUTHORIZED"     
+     *  )
      * )
      */
     public function deleteArticolo(Request $request)

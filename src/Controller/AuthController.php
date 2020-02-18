@@ -21,15 +21,35 @@ class AuthController extends AbstractController
 
     /**
      * @Route("/api/auth/login", methods={"POST"})
-     * @SWG\Response(
+     * 
+     * @SWG\Post(
+     *  path="/api/auth/login",  
+     *  summary="Login applicativo",
+     *  @SWG\Parameter(
+     *    name="credentials",
+     *    in="body",
+     *    required=true,   
+     *    type="array",
+     *       @SWG\Schema(
+     *          @SWG\Items(
+     *             @SWG\Property(type="string",property="email",description="email"),
+     *             @SWG\Property(type="string",property="password",description="password"), 
+     *          )
+     *       )
+     *  ), 
+     *  @SWG\Response(
      *     response=200,
-     *     description="Login",
      *     @SWG\Schema(
      *        @SWG\Property(
      *          property="accessToken",
      *          description="API Access Token"
      *        )
      *     )
+     *  ),
+     *  @SWG\Response(
+     *     response=400,
+     *     description="BAD REQUEST"     
+     *  )
      * )
      */
     public function login(Request $request)
@@ -59,9 +79,32 @@ class AuthController extends AbstractController
 
     /**
      * @Route("/api/auth/logout", methods={"GET"})
-     * @SWG\Response(
-     *     response=200,
-     *     description="Logout"
+     * @SWG\Post(
+     *  path="/api/auth/login",  
+     *  summary="Logout applicativo",
+     *  @SWG\Parameter(
+     *    name="credentials",
+     *    in="body",
+     *    required=true,   
+     *    type="array",
+     *       @SWG\Schema(
+     *          @SWG\Items(
+     *             @SWG\Property(type="string",property="email",description="email"),
+     *             @SWG\Property(type="string",property="password",description="password"), 
+     *          )
+     *       )
+     *  ), 
+     *  @SWG\Response(
+     *     response=200
+     *  ),
+     *  @SWG\Response(
+     *     response=400,
+     *     description="BAD REQUEST"     
+     *  ),
+     *  @SWG\Response(
+     *     response=500,
+     *     description="BAD TOKEN"     
+     *  )
      * )
      */
     public function logout(Request $request)
