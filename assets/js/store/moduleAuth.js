@@ -14,12 +14,19 @@ const moduleAuth = {
     }
   },
   actions: {
-    async login({ commit }, payload) {      
+    async login({
+      commit
+    }, payload) {
       const barattoApiClient = new BarattoApiClient();
       let loginData = await barattoApiClient.login(payload.email, payload.password);
       if (loginData) {
         commit('login', loginData);
-        router.push({ path: "/user" });
+        router.push({path: "/"});
+      } else {
+        commit('login', {
+          accessToken: '',
+          allowAdmin: false
+        });
       }
     }
   }

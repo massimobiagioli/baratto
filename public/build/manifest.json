@@ -1,5 +1,5 @@
 {
-  "build/0.7f01c520.js": "/build/0.7f01c520.js",
-  "build/app.js": "/build/app.4bd85d53.js",
-  "build/runtime.js": "/build/runtime.1103dde6.js"
+  "build/app.js": "/build/app.js",
+  "build/runtime.js": "/build/runtime.js",
+  "build/vendors~app.js": "/build/vendors~app.js"
 }

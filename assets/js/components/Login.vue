@@ -22,7 +22,7 @@
           </div>
         </div>
         <div class="card-action">
-          <a class="waves-effect waves-light btn" @click="login()">login</a>
+          <a class="waves-effect waves-light btn" @click="login({email, password})">login</a>
         </div>
       </div>
     </div>
@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { mapState, mapActions } from 'vuex';
 export default {
   name: "Login",
   data: () => ({
@@ -41,6 +41,11 @@ export default {
     ...mapActions('auth', [
       'login'
     ])
+  },
+  computed: {
+    ...mapState('auth', {
+      accessToken: state => state.accessToken
+    })
   }
 };
 </script>

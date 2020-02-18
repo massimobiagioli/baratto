@@ -7,16 +7,21 @@
           <div class="row">
             <form class="col s12">
               <ul id="example-1">
-                <li v-for="articolo in articoli" v-bind:key="articolo">
-                  {{ articolo.id }} - {{ articolo.nome }} - {{ articolo.monete }}
-                  <span>                                  
-                    <a class="waves-effect waves-light btn" @click="updateArticolo(articolo.id)">Modifica</a>
-                    <a class="waves-effect waves-light btn" @click="deleteArticolo(articolo.id)">Elimina</a>
-                  </span>>
+                <li v-for="articolo in articoli" v-bind:key="articolo.id">
+                  <div class="row">
+                    <div class="col s6 m6">
+                      <span>{{ articolo.nome }} (Valore: {{ articolo.monete }} monete)</span>
+                    </div>
+                    <div class="col s6 m6">
+                      <span>                                  
+                        <a class="waves-effect waves-light btn" @click="updateArticolo(articolo.id)">Modifica</a>
+                        <a class="waves-effect waves-light btn" @click="deleteArticolo(articolo.id)">Elimina</a>
+                      </span>
+                    </div>
+                  </div>
                 </li>
               </ul>
               <div>
-                <span>Articolo</span>
                 <div class="row">
                   <div class="input-field col s12">
                     <input id="nome" type="text" class="validate" v-model="nome">
@@ -57,17 +62,15 @@ export default {
   }),
   mounted() {
     if (this.accessToken == '' || !this.allowAdmin) {
-      this.$routes.push({ path: "/login" });
+      this.$router.push({ path: "/login" });
     }
   },
   methods: {
     async listArticoli() {      
       this.articoli = await barattoApiClient.listArticoli(this.accessToken);
-      console.log(articoli);
     },
     async getArticolo(id) {            
       let articolo = await barattoApiClient.getArticolo(this.accessToken, id);
-      console.log(articolo);
     },
     async insertArticolo() {      
       let articolo = {
@@ -75,7 +78,6 @@ export default {
         'monete': this.monete
       };
       let articoloRet = await barattoApiClient.insertArticolo(this.accessToken, articolo);      
-      console.log(articolo);
       await this.listArticoli();
     },
     async updateArticolo(id) {                  
@@ -84,17 +86,15 @@ export default {
         'monete': this.monete
       };
       let articoloRet = await barattoApiClient.updateArticolo(this.accessToken, id, articolo);
-      console.log(articolo);
       await this.listArticoli();
     },
     async deleteArticolo(id) {          
-      await barattoApiClient.deleteArticolo(this.accessToken, id);      
-      console.log('deleted');
+      await barattoApiClient.deleteArticolo(this.accessToken, id);
       await this.listArticoli();
     }
   },
   computed: {
-    ...mapState('counter', {
+    ...mapState('auth', {
       accessToken: state => state.accessToken,
       allowAdmin: state => state.allowAdmin
     })
