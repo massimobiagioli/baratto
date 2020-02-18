@@ -31,6 +31,13 @@ class Articolo
         return $this->id;
     }
 
+    public function setId(int $id): self
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
     public function getNome(): ?string
     {
         return $this->nome;
