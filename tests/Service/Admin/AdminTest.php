@@ -1,5 +1,5 @@
 <?php
-namespace App\Tests\Service\Authenticator;
+namespace App\Tests\Service\Admin;
 
 use App\Entity\Articolo;
 use App\Repository\ArticoloRepository;
@@ -7,7 +7,7 @@ use App\Service\Admin\AdminDoctrineImpl;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
 
-class AuthenticatorTest extends TestCase
+class AdminTest extends TestCase
 {
     private $objectManager;
     private $adminService;
@@ -84,7 +84,7 @@ class AuthenticatorTest extends TestCase
         $articoloNew = new Articolo();        
         $articoloNew->setNome('Consulenza RDBMS Oracle (1h)');
         $articoloNew->setMonete(50);
-        $articolo = $this->adminService->insertArticolo($articolo);
+        $articolo = $this->adminService->insertArticolo($articoloNew);
         $this->assertNotNull($articolo);
     }
 
@@ -94,7 +94,7 @@ class AuthenticatorTest extends TestCase
         $articoloNew->setNome('');
         $articoloNew->setMonete(1);
         $this->expectException(\Exception::class);
-        $articolo = $this->adminService->insertArticolo($articolo);        
+        $articolo = $this->adminService->insertArticolo($articoloNew);        
     }
 
     public function test_update_articolo_with_valid_id_returns_modified_articolo()

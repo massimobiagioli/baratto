@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class AuthController extends AbstractController
+class AdminController extends AbstractController
 {
     private $authenticator;
     private $adminService;
@@ -194,8 +194,8 @@ class AuthController extends AbstractController
     }
 
     /**
-     * @Route("/api/admin/articoli/{id}", methods={"UPDATE"}, requirements={"id"="\d+"})
-     * @SWG\Update(
+     * @Route("/api/admin/articoli/{id}", methods={"PUT"}, requirements={"id"="\d+"})
+     * @SWG\Put(
      *  path="/api/admin/articoli/{id}",  
      *  summary="Inserimento articolo",
      *  @SWG\Parameter(

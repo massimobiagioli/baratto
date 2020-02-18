@@ -4,9 +4,9 @@ namespace App\Service\Authenticator;
 
 use App\Entity\Token;
 use App\Entity\Utente;
-use Doctrine\ORM\EntityManagerInterface;
 use App\Service\Authenticator\AccessToken;
 use App\Service\Authenticator\AuthenticatorInterface;
+use Doctrine\ORM\EntityManagerInterface;
 
 final class AuthenticatorInternal implements AuthenticatorInterface
 {
@@ -48,19 +48,23 @@ final class AuthenticatorInternal implements AuthenticatorInterface
         if (!$token) {
             throw new \Exception('Token non valido');
         }
-        $this->entityManager->remove($token);   
-        $this->entityManager->flush();            
+        $this->entityManager->remove($token);
+        $this->entityManager->flush();
     }
 
     public function verify(string $tokenKey): AccessToken
     {
         $tokenRepository = $this->entityManager->getRepository(Token::class);
+        $utenteRepository = $this->entityManager->getRepository(Utente::class);
         $token = $tokenRepository->findOneBy(['accessToken' => $tokenKey]);
+        if (!$token) {
+            throw new \Exception('Token non trovato');
+        }
         $utente = $utenteRepository->find($token->getIdUtente());
         if (!$utente) {
             throw new \Exception('Utente non trovato');
         }
-        $accessToken = AccessToken::fromToken(tokenKey, $utente->getAmministratore());
+        $accessToken = AccessToken::fromToken($tokenKey, $utente->getAmministratore());
 
         return $accessToken;
     }

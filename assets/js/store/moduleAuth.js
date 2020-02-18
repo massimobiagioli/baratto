@@ -1,4 +1,4 @@
-import { router } from "../router";
+import router from "../router";
 import BarattoApiClient from "../lib/baratto-api-client";
 
 const moduleAuth = {

@@ -1,7 +1,9 @@
 <?php
 namespace App\Tests\Service\Authenticator;
 
+use App\Entity\Token;
 use App\Entity\Utente;
+use App\Repository\TokenRepository;
 use App\Repository\UtenteRepository;
 use App\Service\Authenticator\AuthenticatorInternal;
 use Doctrine\ORM\EntityManagerInterface;
@@ -33,20 +35,26 @@ class AuthenticatorTest extends TestCase
         $utenteRepository->expects($this->any())
             ->method('findOneBy')
             ->will($this->returnValueMap($args));
+        
+        $args = [
+            [1, null, null, $utente],
+            [9, null, null, null]
+        ];
+        $utenteRepository->expects($this->any())
+            ->method('find')
+            ->will($this->returnValueMap($args));
 
         $tokenRepository = $this->createMock(TokenRepository::class);
         $args = [
             [['accessToken' => '737568f2-20ea-462f-b469-6a5a9b3062d6'], null, $token],
             [['accessToken' => 'bad-token-1234'], null, null],
         ];
-        $utenteRepository->expects($this->any())
+        $tokenRepository->expects($this->any())
             ->method('findOneBy')
             ->will($this->returnValueMap($args));
 
         $this->entityManager = $this->createMock(EntityManagerInterface::class);
-        /*$this->entityManager->expects($this->any())
-            ->method('getRepository')
-            ->willReturn($utenteRepository);*/
+      
         $args = [
             [Utente::class, $utenteRepository],
             [Token::class, $tokenRepository],
@@ -93,31 +101,31 @@ class AuthenticatorTest extends TestCase
         $accessToken = $this->authenticator->login($email, $password);
     }
 
-    public function test_internal_logout_with_good_token() 
+    public function test_internal_logout_with_good_token()
     {
         $accessToken = '737568f2-20ea-462f-b469-6a5a9b3062d6';
-        $this->authenticator->logout($accessToken);        
+        $this->authenticator->logout($accessToken);
     }
 
     public function test_internal_logout_with_wrong_token_raise_exception()
     {
         $accessToken = 'bad-token-1234';
         $this->expectException(\Exception::class);
-        $this->authenticator->logout($accessToken);                
+        $this->authenticator->logout($accessToken);
     }
 
-    public function test_internal_verify_with_good_token_returns_access_token() 
+    public function test_internal_verify_with_good_token_returns_access_token()
     {
         $accessToken = '737568f2-20ea-462f-b469-6a5a9b3062d6';
-        $ret = $this->authenticator->verify($accessToken);   
-        $this->assertNotNull($ret);     
+        $ret = $this->authenticator->verify($accessToken);
+        $this->assertNotNull($ret);
     }
 
     public function test_internal_logout_with_wrong_token_raise_exceptio()
     {
-        $accessToken = 'bad-token-1234';     
-        $this->expectException(\Exception::class);   
-        $ret = $this->authenticator->verify($accessToken);               
+        $accessToken = 'bad-token-1234';
+        $this->expectException(\Exception::class);
+        $ret = $this->authenticator->verify($accessToken);
     }
 
 }

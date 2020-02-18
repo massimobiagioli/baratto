@@ -23,7 +23,7 @@ final class AccessToken
 
     public static function fromToken(string $tokenKey, bool $allowAdmin)
     {
-        return new self(tokenKey, $allowAdmin);        
+        return new self($tokenKey, $allowAdmin);        
     }
 
     public function getValue(): string

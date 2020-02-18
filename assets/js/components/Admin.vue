@@ -74,7 +74,7 @@ export default {
         'nome': this.nome,
         'monete': this.monete
       };
-      let articolo = await barattoApiClient.listArticoli(this.accessToken, articolo);      
+      let articoloRet = await barattoApiClient.insertArticolo(this.accessToken, articolo);      
       console.log(articolo);
       await this.listArticoli();
     },
@@ -83,7 +83,7 @@ export default {
         'nome': this.nome,
         'monete': this.monete
       };
-      let articolo = await barattoApiClient.listArticoli(this.accessToken, id, articolo);
+      let articoloRet = await barattoApiClient.updateArticolo(this.accessToken, id, articolo);
       console.log(articolo);
       await this.listArticoli();
     },

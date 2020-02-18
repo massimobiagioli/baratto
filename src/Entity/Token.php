@@ -31,6 +31,13 @@ class Token
         return $this->id;
     }
 
+    public function setId(int $id): self
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
     public function getAccessToken(): ?string
     {
         return $this->accessToken;
