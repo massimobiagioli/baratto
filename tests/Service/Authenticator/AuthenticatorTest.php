@@ -93,18 +93,31 @@ class AuthenticatorTest extends TestCase
         $accessToken = $this->authenticator->login($email, $password);
     }
 
-    public function test_internal_logout_with_good_token_ok() 
+    public function test_internal_logout_with_good_token() 
     {
         $accessToken = '737568f2-20ea-462f-b469-6a5a9b3062d6';
-        $ret = $this->authenticator->logout($accessToken);
-        $this->assertTrue($ret);
+        $this->authenticator->logout($accessToken);        
     }
 
     public function test_internal_logout_with_wrong_token_raise_exception()
     {
         $accessToken = 'bad-token-1234';
         $this->expectException(\Exception::class);
-        $ret = $this->authenticator->logout($accessToken);                
+        $this->authenticator->logout($accessToken);                
+    }
+
+    public function test_internal_verify_with_good_token_returns_access_token() 
+    {
+        $accessToken = '737568f2-20ea-462f-b469-6a5a9b3062d6';
+        $ret = $this->authenticator->verify($accessToken);   
+        $this->assertNotNull($ret);     
+    }
+
+    public function test_internal_logout_with_wrong_token_raise_exceptio()
+    {
+        $accessToken = 'bad-token-1234';     
+        $this->expectException(\Exception::class);   
+        $ret = $this->authenticator->verify($accessToken);               
     }
 
 }

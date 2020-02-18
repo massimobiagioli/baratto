@@ -21,6 +21,11 @@ final class AccessToken
         return new self($uuid->toString(), $allowAdmin);
     }
 
+    public static function fromToken(string $tokenKey, bool $allowAdmin)
+    {
+        return new self(tokenKey, $allowAdmin);        
+    }
+
     public function getValue(): string
     {
         return $this->value;

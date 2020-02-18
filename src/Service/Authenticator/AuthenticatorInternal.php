@@ -41,18 +41,28 @@ final class AuthenticatorInternal implements AuthenticatorInterface
         return $accessToken;
     }
 
-    public function logout(string $accessToken): bool
+    public function logout(string $accessToken): void
     {
         $tokenRepository = $this->entityManager->getRepository(Token::class);
         $token = $tokenRepository->findOneBy(['accessToken' => $accessToken]);
         if (!$token) {
             throw new \Exception('Token non valido');
         }
-
         $this->entityManager->remove($token);   
-        $this->entityManager->flush();     
+        $this->entityManager->flush();            
+    }
 
-        return true;
+    public function verify(string $tokenKey): AccessToken
+    {
+        $tokenRepository = $this->entityManager->getRepository(Token::class);
+        $token = $tokenRepository->findOneBy(['accessToken' => $tokenKey]);
+        $utente = $utenteRepository->find($token->getIdUtente());
+        if (!$utente) {
+            throw new \Exception('Utente non trovato');
+        }
+        $accessToken = AccessToken::fromToken(tokenKey, $utente->getAmministratore());
+
+        return $accessToken;
     }
 
 }

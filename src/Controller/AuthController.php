@@ -36,13 +36,13 @@ class AuthController extends AbstractController
     {
         $loginCredentials = json_decode($request->getContent(), true);
         if (!$loginCredentials) {
-            return new Response('No login credentials specified', 400);
+            return new Response('Credenziali non specificate', 400);
         }
         if (empty($loginCredentials['email'])) {
-            return new Response('No email specified', 400);
+            return new Response('Email non specificata', 400);
         }
         if (empty($loginCredentials['password'])) {
-            return new Response('No password specified', 400);
+            return new Response('Password non specificata', 400);
         }
         
         try {
