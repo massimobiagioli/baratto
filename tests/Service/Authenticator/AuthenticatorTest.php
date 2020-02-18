@@ -20,6 +20,11 @@ class AuthenticatorTest extends TestCase
         $utente->setPassword('6a71bdc6d5e48a76804e7881d8221591078f18f13b13d62669d1b48d638422a4');
         $utente->setAmministratore(true);
 
+        $token = new Token();
+        $token->setId(1);
+        $token->setAccessToken('737568f2-20ea-462f-b469-6a5a9b3062d6');
+        $token->setIdUtente(1);
+
         $utenteRepository = $this->createMock(UtenteRepository::class);
         $args = [
             [['email' => 'roger.green@gmail.com'], null, $utente],
@@ -29,10 +34,26 @@ class AuthenticatorTest extends TestCase
             ->method('findOneBy')
             ->will($this->returnValueMap($args));
 
+        $tokenRepository = $this->createMock(TokenRepository::class);
+        $args = [
+            [['accessToken' => '737568f2-20ea-462f-b469-6a5a9b3062d6'], null, $token],
+            [['accessToken' => 'bad-token-1234'], null, null],
+        ];
+        $utenteRepository->expects($this->any())
+            ->method('findOneBy')
+            ->will($this->returnValueMap($args));
+
         $this->entityManager = $this->createMock(EntityManagerInterface::class);
+        /*$this->entityManager->expects($this->any())
+            ->method('getRepository')
+            ->willReturn($utenteRepository);*/
+        $args = [
+            [Utente::class, $utenteRepository],
+            [Token::class, $tokenRepository],
+        ];
         $this->entityManager->expects($this->any())
             ->method('getRepository')
-            ->willReturn($utenteRepository);
+            ->will($this->returnValueMap($args));
 
         $this->entityManager->expects($this->any())
             ->method('persist')
@@ -61,7 +82,7 @@ class AuthenticatorTest extends TestCase
         $email = 'thisIsAWrongUser.green@gmail.com';
         $password = 'pAzZ123!$&';
         $this->expectException(\Exception::class);
-        $this->authenticator->login($email, $password);
+        $accessToken = $this->authenticator->login($email, $password);
     }
 
     public function test_internal_login_with_wrong_password_raise_exception()
@@ -69,8 +90,21 @@ class AuthenticatorTest extends TestCase
         $email = 'roger.green@gmail.com';
         $password = 'thisIsAWrongPassword!';
         $this->expectException(\Exception::class);
-        $this->authenticator->login($email, $password);
+        $accessToken = $this->authenticator->login($email, $password);
     }
 
-    // TODO: Test logout
+    public function test_internal_logout_with_good_token_ok() 
+    {
+        $accessToken = '737568f2-20ea-462f-b469-6a5a9b3062d6';
+        $ret = $this->authenticator->logout($accessToken);
+        $this->assertTrue($ret);
+    }
+
+    public function test_internal_logout_with_wrong_token_raise_exception()
+    {
+        $accessToken = 'bad-token-1234';
+        $this->expectException(\Exception::class);
+        $ret = $this->authenticator->logout($accessToken);                
+    }
+
 }

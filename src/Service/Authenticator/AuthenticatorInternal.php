@@ -46,7 +46,7 @@ final class AuthenticatorInternal implements AuthenticatorInterface
         $tokenRepository = $this->entityManager->getRepository(Token::class);
         $token = $tokenRepository->findOneBy(['accessToken' => $accessToken]);
         if (!$token) {
-          return false;
+            throw new \Exception('Token non valido');
         }
 
         $this->entityManager->remove($token);   
