@@ -9,17 +9,33 @@
               <ul id="example-1">
                 <li v-for="articolo in articoli" v-bind:key="articolo">
                   {{ articolo.id }} - {{ articolo.nome }} - {{ articolo.monete }}
+                  <span>                                  
+                    <a class="waves-effect waves-light btn" @click="updateArticolo(articolo.id)">Modifica</a>
+                    <a class="waves-effect waves-light btn" @click="deleteArticolo(articolo.id)">Elimina</a>
+                  </span>>
                 </li>
               </ul>
+              <div>
+                <span>Articolo</span>
+                <div class="row">
+                  <div class="input-field col s12">
+                    <input id="nome" type="text" class="validate" v-model="nome">
+                    <label for="nome">Nome</label>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="input-field col s12">
+                    <input id="monete" type="number" class="validate" v-model="monete">
+                    <label for="monete">Monete</label>
+                  </div>
+                </div>
+              </div>
             </form>
           </div>
         </div>
         <div class="card-action">
-          <a class="waves-effect waves-light btn" @click="listArticoli()">Elenca</a>
-          <a class="waves-effect waves-light btn" @click="getArticolo()">GET</a>
-          <a class="waves-effect waves-light btn" @click="insertArticolo()">INSERT</a>
-          <a class="waves-effect waves-light btn" @click="updateArticolo()">UPDATE</a>
-          <a class="waves-effect waves-light btn" @click="deleteArticolo()">DELETE</a>
+          <a class="waves-effect waves-light btn" @click="listArticoli()">Elenca</a>          
+          <a class="waves-effect waves-light btn" @click="insertArticolo()">Inserisci</a>
         </div>
       </div>
     </div>
@@ -35,7 +51,9 @@ const barattoApiClient = new BarattoApiClient();
 export default {
   name: "Admin",
   data: () => ({
-    articoli: []
+    articoli: [],
+    nome: '',
+    monete: 0
   }),
   mounted() {
     if (this.accessToken == '' || !this.allowAdmin) {
@@ -47,30 +65,27 @@ export default {
       this.articoli = await barattoApiClient.listArticoli(this.accessToken);
       console.log(articoli);
     },
-    async getArticolo() {      
-      let id = 1;
+    async getArticolo(id) {            
       let articolo = await barattoApiClient.getArticolo(this.accessToken, id);
       console.log(articolo);
     },
     async insertArticolo() {      
       let articolo = {
-        'nome': 'Articolo di prova',
-        'monete': '15'
+        'nome': this.nome,
+        'monete': this.monete
       };
       let articolo = await barattoApiClient.listArticoli(this.accessToken, articolo);
       console.log(articolo);
     },
-    async updateArticolo() {            
-      let id = 5;
+    async updateArticolo(id) {                  
       let articolo = {
-        'nome': 'Articolo di prova modificato',
-        'monete': '16'
+        'nome': this.nome,
+        'monete': this.monete
       };
       let articolo = await barattoApiClient.listArticoli(this.accessToken, id, articolo);
       console.log(articolo);
     },
-    async deleteArticolo() {    
-      let id = 5;  
+    async deleteArticolo(id) {          
       await barattoApiClient.deleteArticolo(this.accessToken, id);      
       console.log('deleted');
     }
