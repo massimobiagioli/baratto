@@ -85,7 +85,7 @@ class UserController extends AbstractController
     /**
      * @Route("/api/listItemsForSale", methods={"GET"})
      * @SWG\Get(
-     *  path="/api/listItemsForSale/{utenteId}",
+     *  path="/api/listItemsForSale",
      *  summary="Elenco articoli in vendita",
      *  @SWG\Parameter(
      *    name="X-AUTH-TOKEN",
@@ -134,7 +134,7 @@ class UserController extends AbstractController
     /**
      * @Route("/api/residualCoins", methods={"GET"})
      * @SWG\Get(
-     *  path="/api/residualCoins/{utenteId}",
+     *  path="/api/residualCoins",
      *  summary="Elenco monete residue",
      *  @SWG\Parameter(
      *    name="X-AUTH-TOKEN",
