@@ -27,3 +27,4 @@ services:
     # please note that last definitions always *replace* previous ones
     App\Service\Authenticator\AuthenticatorInterface: '@App\Service\Authenticator\AuthenticatorInternal'  
     App\Service\Admin\AdminInterface: '@App\Service\Admin\AdminDoctrineImpl'  
+    App\Service\User\UserInterface: '@App\Service\User\UserDoctrineImpl' 

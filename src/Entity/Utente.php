@@ -46,6 +46,11 @@ class Utente
         return $this->id;
     }
 
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $monete;
+
     public function setId(string $id): self
     {
         $this->id = $id;
@@ -109,6 +114,18 @@ class Utente
     public function setCognome(string $cognome): self
     {
         $this->cognome = $cognome;
+
+        return $this;
+    }
+
+    public function getMonete(): ?int
+    {
+        return $this->monete;
+    }
+
+    public function setMonete(int $monete): self
+    {
+        $this->monete = $monete;
 
         return $this;
     }

@@ -9,6 +9,13 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Movimento
 {
+    const TIPO_ACQUISTO = 'A';
+    const TIPO_VENDITA = 'V';
+
+    const STATO_INSERITO = 'I';
+    const STATO_ACQUISTATO = 'A';
+    const STATO_EVASO = 'E';
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -27,12 +34,17 @@ class Movimento
     private $dataOperazione;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Utente")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Articolo", fetch="EAGER")
+     */
+    private $articolo;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Utente", fetch="EAGER")
      */
     private $venditore;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Utente")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Utente", fetch="EAGER")
      */
     private $compratore;
 
@@ -76,6 +88,18 @@ class Movimento
     public function setDataOperazione(\DateTimeInterface $dataOperazione): self
     {
         $this->dataOperazione = $dataOperazione;
+
+        return $this;
+    }
+    
+    public function getArticolo(): ?Articolo
+    {
+        return $this->articolo;
+    }
+
+    public function setArticolo(?Articolo $articolo): self
+    {
+        $this->articolo = $articolo;
 
         return $this;
     }

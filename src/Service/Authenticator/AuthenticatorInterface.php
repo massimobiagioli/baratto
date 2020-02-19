@@ -9,4 +9,5 @@ interface AuthenticatorInterface
     public function login(string $email, string $password): AccessToken;
     public function logout(string $accessToken): void;
     public function verify(string $accessToken): AccessToken;
+    public function getUserId(string $accessToken): int;
 }

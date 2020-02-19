@@ -69,4 +69,14 @@ final class AuthenticatorInternal implements AuthenticatorInterface
         return $accessToken;
     }
 
+    public function getUserId(string $tokenKey): int
+    {
+        $tokenRepository = $this->entityManager->getRepository(Token::class);
+        $utenteRepository = $this->entityManager->getRepository(Utente::class);
+        $token = $tokenRepository->findOneBy(['accessToken' => $tokenKey]);
+        if (!$token) {
+            throw new \Exception('Token non trovato');
+        }
+        return $token->getIdUtente();
+    }
 }
