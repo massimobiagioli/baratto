@@ -64,7 +64,7 @@ class Movimento
     private $ticket;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true)
      */
     private $idMovimentoVendita;
 

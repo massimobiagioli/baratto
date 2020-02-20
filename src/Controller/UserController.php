@@ -114,8 +114,8 @@ class UserController extends AbstractController
     public function buy(Request $request)
     {
         try {
-            $accessToken = $this->authenticator->verify($tokenKey);
             $tokenKey = $request->headers->get('X-AUTH-TOKEN');
+            $accessToken = $this->authenticator->verify($tokenKey);
         } catch (\Exception $e) {
             return new Response($e->getMessage(), 401);
         }
@@ -168,8 +168,8 @@ class UserController extends AbstractController
     public function close(Request $request)
     {
         try {
-            $accessToken = $this->authenticator->verify($tokenKey);
             $tokenKey = $request->headers->get('X-AUTH-TOKEN');
+            $accessToken = $this->authenticator->verify($tokenKey);
         } catch (\Exception $e) {
             return new Response($e->getMessage(), 401);
         }
@@ -184,11 +184,11 @@ class UserController extends AbstractController
 
         try {
             $utenteId = $this->authenticator->getUserId($tokenKey);
-            $ticket = $this->userService->close(
+            $this->userService->close(
                 $toInsert['movimentoId'],
                 $utenteId
             );
-            return new JsonResponse(['ticket' => $ticket->getValue()], 201);
+            return new Response('', 201);
         } catch (\Exception $e) {
             return new Response($e->getMessage(), 500);
         }

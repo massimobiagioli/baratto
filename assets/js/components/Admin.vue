@@ -45,9 +45,9 @@
       </div>
     </div>
 
-    <div>
+    <!--<div>
       <a class="waves-effect waves-light btn" @click="logout()">Logout</a>
-    </div>
+    </div>-->
 
   </div>
 </template>

@@ -111,11 +111,8 @@ class AuthController extends AbstractController
         }
 
         try {
-            if ($this->authenticator->logout($accessToken)) {
-                return new Response('');
-            } else {
-                return new Response('', 500);
-            }
+            $this->authenticator->logout($accessToken);
+            return new Response('');
         } catch (\Exception $e) {
             return new Response($e->getMessage(), 500);
         }

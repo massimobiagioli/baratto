@@ -64,6 +64,7 @@ final class UserDoctrineImpl implements UserInterface
             throw new \Exception("Articolo non trovato");
         }
         
+        $quantita = $movimentoVendita->getQuantita();
         $totalPrice = $articolo->getMonete() * $quantita;
         if ($compratore->getMonete() < $totalPrice) {
             throw new \Exception("Disponibilità monete insufficiente");
@@ -72,6 +73,7 @@ final class UserDoctrineImpl implements UserInterface
         $movimento = new Movimento();
         $movimento->setArticolo($articolo);
         $movimento->setVenditore($movimentoVendita->getVenditore());
+        $movimento->setCompratore($compratore);
         $movimento->setQuantita($quantita);
         $movimento->setDataOperazione(\DateTime::createFromFormat('Y-m-d H:i:s', date('Y-m-d H:i:s')));
         $movimento->setTipo(Movimento::TIPO_ACQUISTO);
@@ -108,9 +110,10 @@ final class UserDoctrineImpl implements UserInterface
         $movimento->setStato(Movimento::STATO_EVASO);
         $this->entityManager->persist($movimento);
 
+        $quantita = $movimento->getQuantita();
         $totalPrice = $articolo->getMonete() * $quantita;
-        $venditore->setMonete($utente->getMonete() + $totalPrice);
-        $this->entityManager->persist($compratore);
+        $venditore->setMonete($venditore->getMonete() + $totalPrice);
+        $this->entityManager->persist($venditore);
 
         $this->entityManager->flush();
     }
@@ -123,7 +126,7 @@ final class UserDoctrineImpl implements UserInterface
         ];
         $movimenti = $this->movimentoRepository->findBy($criteria, ['dataOperazione' => 'DESC']);
         $movimenti = array_filter($movimenti, function ($m) use ($utenteId) {
-            return $m->getVenditore()->getId() == $utenteId;
+            return $m->getVenditore()->getId() === $utenteId;
         });
         return $movimenti;
     }
@@ -136,8 +139,7 @@ final class UserDoctrineImpl implements UserInterface
         ];
         $movimenti = $this->movimentoRepository->findBy($criteria, ['dataOperazione' => 'DESC']);
         $movimenti = array_filter($movimenti, function ($m) use ($utenteId) {
-            $movimentoAcquisto = $this->movimentoRepository->findBy(['idMovimentoVendita' => $m->getId()]);
-            return !!$movimentoAcquisto;
+            return $m->getVenditore()->getId() !== $utenteId;
         });
         return $movimenti;
     }
@@ -150,7 +152,7 @@ final class UserDoctrineImpl implements UserInterface
         ];
         $movimenti = $this->movimentoRepository->findBy($criteria, ['dataOperazione' => 'DESC']);
         $movimenti = array_filter($movimenti, function ($m) use ($utenteId) {
-            return $m->getCompratore()->getId() == $utenteId;
+            return $m->getCompratore()->getId() === $utenteId;
         });
         return $movimenti;
     }    
@@ -163,7 +165,7 @@ final class UserDoctrineImpl implements UserInterface
         ];
         $movimenti = $this->movimentoRepository->findBy($criteria, ['dataOperazione' => 'DESC']);
         $movimenti = array_filter($movimenti, function ($m) use ($utenteId) {
-            return $m->getVenditore()->getId() == $utenteId;
+            return $m->getVenditore()->getId() === $utenteId;
         });
         return $movimenti;
     }

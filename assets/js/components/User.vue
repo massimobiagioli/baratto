@@ -35,16 +35,16 @@
             VENDITA ARTICOLO
 
             <form class="col s12 m6">                            
-              <div class="row">
+              <!--<div class="row">
                 <div class="input-field col s12">
                   <select v-model="articoloId">
-                    <option v-for="articolo in articoli" :value="articolo" :key="articolo.id">
+                    <option v-for="articolo in articoli" :value="articolo.id" :key="articolo.id">
                       {{articolo.nome}}
                     </option>
                   </select>
                   <label for="nome">Articolo</label>
                 </div>
-              </div>
+              </div>-->
               <div class="row">
                 <div class="input-field col s12">
                   <input id="quantita" type="number" class="validate" v-model="quantita">
@@ -117,9 +117,11 @@
       </div>
     </div>
 
+    <!--
     <div>
-      <a class="waves-effect waves-light btn" @click="logout()">Logout</a>
+      <a class="waves-effect waves-light btn" @click="logout({})">Logout</a>
     </div>
+    -->
 
   </div>
 </template>
@@ -134,8 +136,8 @@ export default {
   name: "User",
   data: () => ({
     residualCoins: 0,
-    quantita,
-    articoloId,
+    quantita: 0,
+    articoloId: 0,
     movimenti: [],
     articoliVetrina: [],
     articoliAcquistati: [],
@@ -144,8 +146,9 @@ export default {
   async mounted() {
     if (this.accessToken == '') {
       this.$router.push({ path: "/login" });
+      return;
     }
-    await refreshAll();
+    await this.refreshAll();
   },
   methods: {
     ...mapActions('auth', [
@@ -158,7 +161,7 @@ export default {
       this.articoliVetrina = await barattoApiClient.listItemsToBuy(this.accessToken);
     },
     async listItemsPurchased() {      
-      this.articoliAcquistati = await barattoApiClient.listItemsToBuy(this.accessToken);
+      this.articoliAcquistati = await barattoApiClient.listItemsPurchased(this.accessToken);
     },
     async refreshResidualCoins() {      
       this.residualCoins = await barattoApiClient.residualCoins(this.accessToken);
