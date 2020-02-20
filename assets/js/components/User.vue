@@ -117,11 +117,15 @@
       </div>
     </div>
 
+    <div>
+      <a class="waves-effect waves-light btn" @click="logout()">Logout</a>
+    </div>
+
   </div>
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState, mapActions } from 'vuex';
 import BarattoApiClient from "../lib/baratto-api-client";
 
 const barattoApiClient = new BarattoApiClient();
@@ -144,6 +148,9 @@ export default {
     await refreshAll();
   },
   methods: {
+    ...mapActions('auth', [
+      'logout'
+    ]),
     async listItemsForSale() {      
       this.movimenti = await barattoApiClient.listItemsForSale(this.accessToken);
     },
@@ -164,7 +171,7 @@ export default {
       await refreshAll();      
     },
     async buy(movimentoId) {      
-      await barattoApiClient.buy(this.accessToken, this.movimentoId, this.articoloId);
+      await barattoApiClient.buy(this.accessToken, this.movimentoId);
       await refreshAll();      
     },
     async refreshAll() {
