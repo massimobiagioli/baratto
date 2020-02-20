@@ -60,9 +60,6 @@ class AdminController extends AbstractController
         try {
             $tokenKey = $request->headers->get('X-AUTH-TOKEN');
             $accessToken = $this->authenticator->verify($tokenKey);
-            if (!$accessToken->getAllowAdmin()) {
-                return new Response('Accesso ad area amministratore non consentita', 401);
-            }
         } catch (\Exception $e) {
             return new Response($e->getMessage(), 401);
         }
@@ -117,9 +114,6 @@ class AdminController extends AbstractController
         try {
             $tokenKey = $request->headers->get('X-AUTH-TOKEN');
             $accessToken = $this->authenticator->verify($tokenKey);
-            if (!$accessToken->getAllowAdmin()) {
-                return new Response('Accesso ad area amministratore non consentita', 401);
-            }
         } catch (\Exception $e) {
             return new Response($e->getMessage(), 401);
         }
@@ -190,7 +184,7 @@ class AdminController extends AbstractController
         $articolo->setMonete($toInsert['monete']);
         try {
             $newArticolo = $this->adminService->insertArticolo($articolo);
-            return new JsonResponse($this->serializeArticoloToArray($newArticolo));
+            return new JsonResponse($this->serializeArticoloToArray($newArticolo), 201);
         } catch (\Exception $e) {
             return new Response($e->getMessage(), 500);
         }
