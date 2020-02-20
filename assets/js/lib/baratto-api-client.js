@@ -111,7 +111,7 @@ class BarattoApiClient {
       }
     };
     try {
-      let response = await fetch('/api/admin/sell', options);
+      let response = await fetch('/api/sell', options);
       let data = await response.json();
       return data;
     } catch (err) {
@@ -119,19 +119,18 @@ class BarattoApiClient {
     }
   }
 
-  async buy(authToken, movimentoId, articoloId) {
+  async buy(authToken, movimentoId) {
     let headers = new Headers();
     headers.append('X-AUTH-TOKEN', authToken);
     let options = {
       method: 'POST',
       headers,
       body: {
-        movimentoId,
-        articoloId
+        movimentoId
       }
     };
     try {
-      let response = await fetch('/api/admin/buy', options);
+      let response = await fetch('/api/buy', options);
       let data = await response.json();
       return data.ticket;
     } catch (err) {
@@ -139,7 +138,26 @@ class BarattoApiClient {
     }
   }
 
-  async listItemsForSale(authToken, utenteId) {
+  async close(authToken, movimentoId) {
+    let headers = new Headers();
+    headers.append('X-AUTH-TOKEN', authToken);
+    let options = {
+      method: 'POST',
+      headers,
+      body: {
+        movimentoId
+      }
+    };
+    try {
+      let response = await fetch('/api/close', options);
+      let data = await response.json();
+      return data;
+    } catch (err) {
+      return null;
+    }
+  }
+
+  async listItemsForSale(authToken) {
     let headers = new Headers();
     headers.append('X-AUTH-TOKEN', authToken);
     let options = {
@@ -155,7 +173,7 @@ class BarattoApiClient {
     }
   }
 
-  async listItemsToBuy(authToken, utenteId) {
+  async listItemsToBuy(authToken) {
     let headers = new Headers();
     headers.append('X-AUTH-TOKEN', authToken);
     let options = {
@@ -171,7 +189,7 @@ class BarattoApiClient {
     }
   }
 
-  async listItemsPurchased(authToken, utenteId) {
+  async listItemsPurchased(authToken) {
     let headers = new Headers();
     headers.append('X-AUTH-TOKEN', authToken);
     let options = {
@@ -180,6 +198,22 @@ class BarattoApiClient {
     };
     try {
       let response = await fetch('/api/listItemsPurchased', options);
+      let data = await response.json();
+      return data;
+    } catch (err) {
+      return null;
+    }
+  }
+
+  async listItemsToClose(authToken) {
+    let headers = new Headers();
+    headers.append('X-AUTH-TOKEN', authToken);
+    let options = {
+      method: 'GET',
+      headers
+    };
+    try {
+      let response = await fetch('/api/listItemsToClose', options);
       let data = await response.json();
       return data;
     } catch (err) {
