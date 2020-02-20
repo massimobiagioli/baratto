@@ -1,6 +1,8 @@
 import router from "../router";
 import BarattoApiClient from "../lib/baratto-api-client";
 
+const barattoApiClient = new BarattoApiClient();
+
 const moduleAuth = {
   namespaced: true,
   state: {
@@ -11,13 +13,16 @@ const moduleAuth = {
     login(state, payload) {
       state.accessToken = payload.accessToken;
       state.allowAdmin = payload.allowAdmin;
+    },
+    logout(state, payload) {
+      state.accessToken = '';
+      state.allowAdmin = false;
     }
   },
   actions: {
     async login({
       commit
-    }, payload) {
-      const barattoApiClient = new BarattoApiClient();
+    }, payload) {      
       let loginData = await barattoApiClient.login(payload.email, payload.password);
       if (loginData) {
         commit('login', loginData);
@@ -28,6 +33,13 @@ const moduleAuth = {
           allowAdmin: false
         });
       }
+    },
+    async logout({
+      commit
+    }, payload) {
+      await barattoApiClient.logout();
+      commit('logout', {});
+      router.push({path: "/login"});
     }
   }
 };
