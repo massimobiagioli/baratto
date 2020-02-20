@@ -49,23 +49,23 @@ final class UserDoctrineImpl implements UserInterface
         $this->entityManager->flush();
     }
 
-    public function buy(int $movimentoId, int $articoloId, int $compratoreId): Ticket
+    public function buy(int $movimentoId, int $compratoreId): Ticket
     {
         $compratore = $this->utenteRepository->find($compratoreId);
         if (!$compratore) {
             throw new \Exception("Venditore non trovato");
         }       
-        $articolo = $this->articoloRepository->find($articoloId);
-        if (!$articolo) {
-            throw new \Exception("Articolo non trovato");
-        }
         $movimentoVendita = $this->movimentoRepository->find($movimentoId);
         if (!$movimentoVendita) {
             throw new \Exception("Movimento vendita non trovato");
         }
+        $articolo = $this->articoloRepository->find($movimentoVendita->getArticolo()->getId());
+        if (!$articolo) {
+            throw new \Exception("Articolo non trovato");
+        }
         
         $totalPrice = $articolo->getMonete() * $quantita;
-        if ($utente->getMonete() < $totalPrice) {
+        if ($compratore->getMonete() < $totalPrice) {
             throw new \Exception("Disponibilità monete insufficiente");
         }
 
@@ -82,12 +82,37 @@ final class UserDoctrineImpl implements UserInterface
         $this->validateMovimento($movimento);
         $this->entityManager->persist($movimento);
         
-        $compratore->setMonete($utente->getMonete() - $totalPrice);
+        $compratore->setMonete($compratore->getMonete() - $totalPrice);
         $this->entityManager->persist($compratore);
 
         $this->entityManager->flush();        
 
         return $ticket;
+    }
+    
+    public function close(int $movimentoId, int $venditoreId): void
+    {
+        $movimento = $this->movimentoRepository->find($movimentoId);
+        if (!$movimento) {
+            throw new \Exception("Movimento non trovato");
+        }
+        $articolo = $this->articoloRepository->find($movimento->getArticolo()->getId());
+        if (!$articolo) {
+            throw new \Exception("Articolo non trovato");
+        }
+        $venditore = $this->utenteRepository->find($venditoreId);
+        if (!$venditore) {
+            throw new \Exception("Venditore non trovato");
+        }
+        
+        $movimento->setStato(Movimento::STATO_EVASO);
+        $this->entityManager->persist($movimento);
+
+        $totalPrice = $articolo->getMonete() * $quantita;
+        $venditore->setMonete($utente->getMonete() + $totalPrice);
+        $this->entityManager->persist($compratore);
+
+        $this->entityManager->flush();
     }
 
     public function listItemsForSale(int $utenteId): array
@@ -129,6 +154,19 @@ final class UserDoctrineImpl implements UserInterface
         });
         return $movimenti;
     }    
+
+    public function listItemsToClose(int $utenteId): array
+    {
+        $criteria = [
+            'tipo' => Movimento::TIPO_ACQUISTO,
+            'stato' => Movimento::STATO_ACQUISTATO,
+        ];
+        $movimenti = $this->movimentoRepository->findBy($criteria, ['dataOperazione' => 'DESC']);
+        $movimenti = array_filter($movimenti, function ($m) use ($utenteId) {
+            return $m->getVenditore()->getId() == $utenteId;
+        });
+        return $movimenti;
+    }
 
     public function residualCoins(int $utenteId): int
     {
