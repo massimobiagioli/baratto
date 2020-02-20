@@ -49,9 +49,9 @@ class UserController extends AbstractController
      * )
      */
     public function sell(Request $request)
-    {
-        $tokenKey = $request->headers->get('X-AUTH-TOKEN');
+    {        
         try {
+            $tokenKey = $request->headers->get('X-AUTH-TOKEN');
             $accessToken = $this->authenticator->verify($tokenKey);
         } catch (\Exception $e) {
             return new Response($e->getMessage(), 401);
@@ -63,20 +63,81 @@ class UserController extends AbstractController
         }
         if (!isset($toInsert['articoloId'])) {
             return new Response('Id Articolo specificato', 400);
-        }
-        if (!isset($toInsert['venditoreId'])) {
-            return new Response('Id Venditore non specificate', 400);
-        }
+        }        
         if (!isset($toInsert['quantita'])) {
             return new Response('Quantità non specificata', 400);
         }
         try {
+            $utenteId = $this->authenticator->getUserId($tokenKey);
             $movimento = $this->userService->sell(
                 $toInsert['articoloId'],
-                $toInsert['venditoreId'],
+                $utenteId,
                 $toInsert['quantita']
             );
             return new Response('', 201);
+        } catch (\Exception $e) {
+            return new Response($e->getMessage(), 500);
+        }
+    }
+
+    /**
+     * @Route("/api/buy", methods={"POST"})
+     * @SWG\Post(
+     *  path="/api/buy",
+     *  summary="Acquisto articolo",
+     *  @SWG\Parameter(
+     *    name="X-AUTH-TOKEN",
+     *    in="header",
+     *    required=true,
+     *    type="string"
+     *  ),
+    *   @SWG\Response(
+     *     response=201,
+     *     description="OK",
+     *     @SWG\Schema(
+     *        @SWG\Property(
+     *          property="ticket",
+     *          description="Ticket che certifica acquisto"
+     *        )
+     *     ),
+     *  @SWG\Response(
+     *     response=400,
+     *     description="BAD REQUEST"
+     *  ),
+     *  @SWG\Response(
+     *     response=401,
+     *     description="UNAUTHORIZED"
+     *  )
+     * )
+     */
+    public function buy(Request $request)
+    {        
+        try {
+            $accessToken = $this->authenticator->verify($tokenKey);
+            $tokenKey = $request->headers->get('X-AUTH-TOKEN');        
+        } catch (\Exception $e) {
+            return new Response($e->getMessage(), 401);
+        }
+
+        $toInsert = json_decode($request->getContent(), true);
+        if (!$toInsert) {
+            return new Response('Dati da inserire non validi', 400);
+        }
+        if (!isset($toInsert['articoloId'])) {
+            return new Response('Id Articolo specificato', 400);
+        }
+        if (!isset($toInsert['movimentoId'])) {
+            return new Response('Id Movimento non specificato', 400);
+        }        
+        
+        try {
+            $utenteId = $this->authenticator->getUserId($tokenKey);
+            $ticket = $this->userService->buy(
+                $toInsert['movimentoId'],                
+                $toInsert['articoloId'],
+                $utenteId                
+            );
+            return new JsonResponse(['ticket' => $ticket->getValue()], 201);
         } catch (\Exception $e) {
             return new Response($e->getMessage(), 500);
         }
@@ -165,7 +226,7 @@ class UserController extends AbstractController
     public function residualCoins(Request $request)
     {
         try {
-          $tokenKey = $request->headers->get('X-AUTH-TOKEN');
+            $tokenKey = $request->headers->get('X-AUTH-TOKEN');
             $accessToken = $this->authenticator->verify($tokenKey);
         } catch (\Exception $e) {
             return new Response($e->getMessage(), 401);
@@ -175,6 +236,104 @@ class UserController extends AbstractController
             $utenteId = $this->authenticator->getUserId($tokenKey);
             $residualCoins = $this->userService->residualCoins($utenteId);
             return new JsonResponse(['residualCoins' => $residualCoins]);
+        } catch (\Exception $e) {
+            return new Response($e->getMessage(), 500);
+        }
+    }
+
+    /**
+     * @Route("/api/listItemsToBuy", methods={"GET"})
+     * @SWG\Get(
+     *  path="/api/listItemsToBuy",
+     *  summary="Elenco articoli in vendita",
+     *  @SWG\Parameter(
+     *    name="X-AUTH-TOKEN",
+     *    in="header",
+     *    required=true,
+     *    type="string"
+     *  ),
+     *  @SWG\Response(
+     *     response=200,
+     *     description="OK",
+     *     @SWG\Schema(
+     *        @SWG\Property(
+     *          property="movimenti",
+     *          description="Elenco movimenti"
+     *        )
+     *     )
+     *  ),
+     *  @SWG\Response(
+     *     response=400,
+     *     description="BAD REQUEST"
+     *  ),
+     *  @SWG\Response(
+     *     response=401,
+     *     description="UNAUTHORIZED"
+     *  )
+     * )
+     */
+    public function listItemsToBuy(Request $request)
+    {
+        try {
+            $tokenKey = $request->headers->get('X-AUTH-TOKEN');
+            $accessToken = $this->authenticator->verify($tokenKey);
+        } catch (\Exception $e) {
+            return new Response($e->getMessage(), 401);
+        }
+
+        try {
+            $utenteId = $this->authenticator->getUserId($tokenKey);
+            $movimenti = $this->userService->listItemsToBuy($utenteId);
+            return new JsonResponse($this->serializeMovimentiToArray($movimenti));
+        } catch (\Exception $e) {
+            return new Response($e->getMessage(), 500);
+        }
+    }
+
+    /**
+     * @Route("/api/listItemsPurchased", methods={"GET"})
+     * @SWG\Get(
+     *  path="/api/listItemsPurchased",
+     *  summary="Elenco articoli acquistati",
+     *  @SWG\Parameter(
+     *    name="X-AUTH-TOKEN",
+     *    in="header",
+     *    required=true,
+     *    type="string"
+     *  ),
+     *  @SWG\Response(
+     *     response=200,
+     *     description="OK",
+     *     @SWG\Schema(
+     *        @SWG\Property(
+     *          property="movimenti",
+     *          description="Elenco movimenti"
+     *        )
+     *     )
+     *  ),
+     *  @SWG\Response(
+     *     response=400,
+     *     description="BAD REQUEST"
+     *  ),
+     *  @SWG\Response(
+     *     response=401,
+     *     description="UNAUTHORIZED"
+     *  )
+     * )
+     */
+    public function listItemsPurchased(Request $request)
+    {
+        try {
+            $tokenKey = $request->headers->get('X-AUTH-TOKEN');
+            $accessToken = $this->authenticator->verify($tokenKey);
+        } catch (\Exception $e) {
+            return new Response($e->getMessage(), 401);
+        }
+
+        try {
+            $utenteId = $this->authenticator->getUserId($tokenKey);
+            $movimenti = $this->userService->listItemsPurchased($utenteId);
+            return new JsonResponse($this->serializeMovimentiToArray($movimenti));
         } catch (\Exception $e) {
             return new Response($e->getMessage(), 500);
         }
