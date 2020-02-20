@@ -35,6 +35,7 @@ class AppFixtures extends Fixture
         $utente->setNome('Roger');
         $utente->setCognome('Green');
         $utente->setAmministratore(true);
+        $utente->setMonete(100);
         $utenti[] = $utente;
 
         $utente = new Utente();
@@ -44,6 +45,7 @@ class AppFixtures extends Fixture
         $utente->setNome('Frank');
         $utente->setCognome('Black');
         $utente->setAmministratore(false);
+        $utente->setMonete(50);
         $utenti[] = $utente;
 
         $utente = new Utente();
@@ -53,6 +55,7 @@ class AppFixtures extends Fixture
         $utente->setNome('Jennifer');
         $utente->setCognome('White');
         $utente->setAmministratore(false);
+        $utente->setMonete(50);
         $utenti[] = $utente;
 
         return $utenti;

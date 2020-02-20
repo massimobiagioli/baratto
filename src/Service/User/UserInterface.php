@@ -11,7 +11,7 @@ interface UserInterface
     public function buy(int $movimentoId, int $venditoreId): Ticket;
     public function close(int $movimentoId, int $venditoreId): void;
     public function listItemsForSale(int $utenteId): array;
-    public function listItemsToBuySale(int $utenteId): array;
+    public function listItemsToBuy(int $utenteId): array;
     public function listItemsPurchased(int $utenteId): array;
     public function listItemsToClose(int $utenteId): array;
     public function residualCoins(int $utenteId): int;

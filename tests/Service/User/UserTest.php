@@ -4,8 +4,11 @@ namespace App\Tests\Service\Admin;
 use App\Entity\Articolo;
 use App\Entity\Movimento;
 use App\Entity\Utente;
-use App\Service\User\Ticket;
+use App\Repository\ArticoloRepository;
+use App\Repository\MovimentoRepository;
+use App\Repository\UtenteRepository;
 use App\Service\User\UserDoctrineImpl;
+use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
 
 class UserTest extends TestCase
@@ -28,12 +31,12 @@ class UserTest extends TestCase
         $articolo2->setNome('Sviluppo frontend ReactJs (1h)');
         $articolo2->setMonete(10);
         $articoli[] = $articolo2;
-        
-        $articoloRepository = $this->createMock(ArticoloRepository::class);     
+
+        $articoloRepository = $this->createMock(ArticoloRepository::class);
         $args = [
             [1, null, null, $articolo1],
-            [9, null, null, null]
-        ];       
+            [9, null, null, null],
+        ];
         $articoloRepository->expects($this->any())
             ->method('find')
             ->will($this->returnValueMap($args));
@@ -58,11 +61,11 @@ class UserTest extends TestCase
         $forSale = [$movimento1, $movimento2, $movimento3];
         $purchased = [$movimento4];
 
-        $movimentoRepository = $this->createMock(MovimentoRepository::class);     
+        $movimentoRepository = $this->createMock(MovimentoRepository::class);
         $args = [
-            [['tipo' => Movimento::TIPO_VENDITA, 'stato' => Movimento::STATO_INSERITO], null, null, null, $forSale],            
-            [['tipo' => Movimento::TIPO_ACQUISTO, 'stato' => Movimento::STATO_ACQUISTATO], null, null, null, $purchased]
-        ];       
+            [['tipo' => Movimento::TIPO_VENDITA, 'stato' => Movimento::STATO_INSERITO], null, null, null, $forSale],
+            [['tipo' => Movimento::TIPO_ACQUISTO, 'stato' => Movimento::STATO_ACQUISTATO], null, null, null, $purchased],
+        ];
         $movimentoRepository->expects($this->any())
             ->method('findBy')
             ->will($this->returnValueMap($args));
@@ -70,15 +73,22 @@ class UserTest extends TestCase
         $utenti = [];
 
         $utente1 = new Utente();
+        $utente1->setId(1);
+        $utente1->setEmail('franco@gmail.com');
+        $utente1->setMonete(10);
         $utenti[] = $utente1;
 
         $utente2 = new Utente();
+        $utente2->setId(1);
+        $utente2->setEmail('lucio@gmail.com');
+        $utente2->setMonete(10);
         $utenti[] = $utente2;
 
+        $utenteRepository = $this->createMock(UtenteRepository::class);
         $args = [
             [1, null, null, $utente1],
-            [2, null, null, $utente2]
-        ];       
+            [2, null, null, $utente2],
+        ];
         $utenteRepository->expects($this->any())
             ->method('find')
             ->will($this->returnValueMap($args));
@@ -87,8 +97,8 @@ class UserTest extends TestCase
         $args = [
             [Articolo::class, $articoloRepository],
             [Movimento::class, $movimentoRepository],
-            [Utente::class, $utenteRepository]
-        ];   
+            [Utente::class, $utenteRepository],
+        ];
         $this->entityManager->expects($this->any())
             ->method('getRepository')
             ->will($this->returnValueMap($args));
@@ -106,11 +116,17 @@ class UserTest extends TestCase
 
     public function test_sell_returns_void()
     {
+        $articoloId = 1;
+        $venditoreId = 1;
+        $quantita = 1;
         $this->userService->sell($articoloId, $venditoreId, $quantita);
+        $this->assertTrue(TRUE);
     }
 
     public function test_buy_with_right_availability_returns_a_valid_ticket()
     {
+        $movimentoId = 1;
+        $venditoreId = 1;
         $ticket = $this->userService->buy($movimentoId, $venditoreId);
         $ret = preg_match('/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/', $ticket->getValue(), $matches);
         $this->assertNotNull($ticket);
@@ -130,7 +146,9 @@ class UserTest extends TestCase
     {
         $movimentoId = 1;
         $venditoreId = 1;
-        $this->userService->sell($movimentoId, $venditoreId);
+        $quantita = 1;
+        $this->userService->close($movimentoId, $venditoreId, $quantita);
+        $this->assertTrue(TRUE);
     }
 
     public function test_list_items_for_sale_returns_the_right_list()
@@ -144,7 +162,7 @@ class UserTest extends TestCase
     {
         $utenteId = 1;
         $residualCoins = $this->userService->residualCoins($utenteId);
-        $this->assertEquals(50, count($residualCoins));
+        $this->assertEquals(10, $residualCoins);
     }
 
     public function test_list_items_to_buy_returns_the_right_list()

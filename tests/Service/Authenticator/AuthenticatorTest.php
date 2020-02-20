@@ -105,6 +105,7 @@ class AuthenticatorTest extends TestCase
     {
         $accessToken = '737568f2-20ea-462f-b469-6a5a9b3062d6';
         $this->authenticator->logout($accessToken);
+        $this->assertTrue(TRUE);
     }
 
     public function test_internal_logout_with_wrong_token_raise_exception()

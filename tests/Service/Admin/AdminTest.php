@@ -118,7 +118,8 @@ class AdminTest extends TestCase
 
     public function test_delete_articolo_with_valid_id_returns_void()
     {
-        $this->adminService->deleteArticolo(1);    
+        $this->adminService->deleteArticolo(1);  
+        $this->assertTrue(TRUE);  
     }
 
     public function test_delete_articolo_with_wrong_id_raise_exception()
