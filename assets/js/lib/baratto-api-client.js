@@ -99,7 +99,7 @@ class BarattoApiClient {
     }
   }
 
-  async sell(authToken, articoloId, venditoreId, quantita) {
+  async sell(authToken, articoloId, quantita) {
     let headers = new Headers();
     headers.append('X-AUTH-TOKEN', authToken);
     let options = {
@@ -107,7 +107,6 @@ class BarattoApiClient {
       headers,
       body: {
         articoloId,
-        venditoreId,
         quantita
       }
     };
@@ -115,6 +114,26 @@ class BarattoApiClient {
       let response = await fetch('/api/admin/sell', options);
       let data = await response.json();
       return data;
+    } catch (err) {
+      return null;
+    }
+  }
+
+  async buy(authToken, movimentoId, articoloId) {
+    let headers = new Headers();
+    headers.append('X-AUTH-TOKEN', authToken);
+    let options = {
+      method: 'POST',
+      headers,
+      body: {
+        movimentoId,
+        articoloId
+      }
+    };
+    try {
+      let response = await fetch('/api/admin/buy', options);
+      let data = await response.json();
+      return data.ticket;
     } catch (err) {
       return null;
     }
@@ -129,6 +148,38 @@ class BarattoApiClient {
     };
     try {
       let response = await fetch('/api/listItemsForSale', options);
+      let data = await response.json();
+      return data;
+    } catch (err) {
+      return null;
+    }
+  }
+
+  async listItemsToBuy(authToken, utenteId) {
+    let headers = new Headers();
+    headers.append('X-AUTH-TOKEN', authToken);
+    let options = {
+      method: 'GET',
+      headers
+    };
+    try {
+      let response = await fetch('/api/listItemsToBuy', options);
+      let data = await response.json();
+      return data;
+    } catch (err) {
+      return null;
+    }
+  }
+
+  async listItemsPurchased(authToken, utenteId) {
+    let headers = new Headers();
+    headers.append('X-AUTH-TOKEN', authToken);
+    let options = {
+      method: 'GET',
+      headers
+    };
+    try {
+      let response = await fetch('/api/listItemsPurchased', options);
       let data = await response.json();
       return data;
     } catch (err) {
