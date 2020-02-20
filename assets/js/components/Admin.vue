@@ -44,6 +44,11 @@
         </div>
       </div>
     </div>
+
+    <div>
+      <a class="waves-effect waves-light btn" @click="logout()">Logout</a>
+    </div>
+
   </div>
 </template>
 
@@ -66,6 +71,9 @@ export default {
     }
   },
   methods: {
+    ...mapActions('auth', [
+      'logout'
+    ]),
     async listArticoli() {      
       this.articoli = await barattoApiClient.listArticoli(this.accessToken);
     },
