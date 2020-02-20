@@ -122,10 +122,7 @@ class UserController extends AbstractController
         $toInsert = json_decode($request->getContent(), true);
         if (!$toInsert) {
             return new Response('Dati da inserire non validi', 400);
-        }
-        if (!isset($toInsert['articoloId'])) {
-            return new Response('Id Articolo specificato', 400);
-        }
+        }       
         if (!isset($toInsert['movimentoId'])) {
             return new Response('Id Movimento non specificato', 400);
         }        
@@ -133,8 +130,60 @@ class UserController extends AbstractController
         try {
             $utenteId = $this->authenticator->getUserId($tokenKey);
             $ticket = $this->userService->buy(
-                $toInsert['movimentoId'],                
-                $toInsert['articoloId'],
+                $toInsert['movimentoId'],
+                $utenteId                
+            );
+            return new JsonResponse(['ticket' => $ticket->getValue()], 201);
+        } catch (\Exception $e) {
+            return new Response($e->getMessage(), 500);
+        }
+    }
+
+    /**
+     * @Route("/api/close", methods={"POST"})
+     * @SWG\Post(
+     *  path="/api/close",
+     *  summary="Evasione ordine",
+     *  @SWG\Parameter(
+     *    name="X-AUTH-TOKEN",
+     *    in="header",
+     *    required=true,
+     *    type="string"
+     *  ),
+    *   @SWG\Response(
+     *     response=201,
+     *     description="OK"
+     *  @SWG\Response(
+     *     response=400,
+     *     description="BAD REQUEST"
+     *  ),
+     *  @SWG\Response(
+     *     response=401,
+     *     description="UNAUTHORIZED"
+     *  )
+     * )
+     */
+    public function close(Request $request)
+    {        
+        try {
+            $accessToken = $this->authenticator->verify($tokenKey);
+            $tokenKey = $request->headers->get('X-AUTH-TOKEN');        
+        } catch (\Exception $e) {
+            return new Response($e->getMessage(), 401);
+        }
+
+        $toInsert = json_decode($request->getContent(), true);
+        if (!$toInsert) {
+            return new Response('Dati da inserire non validi', 400);
+        }       
+        if (!isset($toInsert['movimentoId'])) {
+            return new Response('Id Movimento non specificato', 400);
+        }        
+        
+        try {
+            $utenteId = $this->authenticator->getUserId($tokenKey);
+            $ticket = $this->userService->close(
+                $toInsert['movimentoId'],
                 $utenteId                
             );
             return new JsonResponse(['ticket' => $ticket->getValue()], 201);
@@ -333,6 +382,55 @@ class UserController extends AbstractController
         try {
             $utenteId = $this->authenticator->getUserId($tokenKey);
             $movimenti = $this->userService->listItemsPurchased($utenteId);
+            return new JsonResponse($this->serializeMovimentiToArray($movimenti));
+        } catch (\Exception $e) {
+            return new Response($e->getMessage(), 500);
+        }
+    }
+
+    /**
+     * @Route("/api/listItemsToClose", methods={"GET"})
+     * @SWG\Get(
+     *  path="/api/listItemsToClose",
+     *  summary="Elenco movimenti da evadere",
+     *  @SWG\Parameter(
+     *    name="X-AUTH-TOKEN",
+     *    in="header",
+     *    required=true,
+     *    type="string"
+     *  ),
+     *  @SWG\Response(
+     *     response=200,
+     *     description="OK",
+     *     @SWG\Schema(
+     *        @SWG\Property(
+     *          property="movimenti",
+     *          description="Elenco movimenti"
+     *        )
+     *     )
+     *  ),
+     *  @SWG\Response(
+     *     response=400,
+     *     description="BAD REQUEST"
+     *  ),
+     *  @SWG\Response(
+     *     response=401,
+     *     description="UNAUTHORIZED"
+     *  )
+     * )
+     */
+    public function listItemsToClose(Request $request)
+    {
+        try {
+            $tokenKey = $request->headers->get('X-AUTH-TOKEN');
+            $accessToken = $this->authenticator->verify($tokenKey);
+        } catch (\Exception $e) {
+            return new Response($e->getMessage(), 401);
+        }
+
+        try {
+            $utenteId = $this->authenticator->getUserId($tokenKey);
+            $movimenti = $this->userService->listItemsToClose($utenteId);
             return new JsonResponse($this->serializeMovimentiToArray($movimenti));
         } catch (\Exception $e) {
             return new Response($e->getMessage(), 500);
