@@ -111,7 +111,7 @@ class UserTest extends TestCase
 
     public function test_buy_with_right_availability_returns_a_valid_ticket()
     {
-        $ticket = $this->userService->buy($movimentoId, $articoloId, $venditoreId);
+        $ticket = $this->userService->buy($movimentoId, $venditoreId);
         $ret = preg_match('/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/', $ticket->getValue(), $matches);
         $this->assertNotNull($ticket);
         $this->assertEquals(1, $ret);
@@ -121,30 +121,50 @@ class UserTest extends TestCase
     public function test_buy_with_wrong_availability_returns_a_valid_ticket()
     {
         $this->expectException(\Exception::class);
-        $ticket = $this->userService->buy($movimentoId, $articoloId, $venditoreId);
+        $movimentoId = 1;
+        $venditoreId = 1;
+        $ticket = $this->userService->buy($movimentoId, $venditoreId);
+    }
+
+    public function test_close_returns_void()
+    {
+        $movimentoId = 1;
+        $venditoreId = 1;
+        $this->userService->sell($movimentoId, $venditoreId);
     }
 
     public function test_list_items_for_sale_returns_the_right_list()
     {
+        $utenteId = 1;
         $movimenti = $this->userService->listItemsForSale($utenteId);
         $this->assertEquals(1, count($movimenti));
     }
 
     public function test_list_residual_coins_returns_the_right_value()
     {
+        $utenteId = 1;
         $residualCoins = $this->userService->residualCoins($utenteId);
         $this->assertEquals(50, count($residualCoins));
     }
 
     public function test_list_items_to_buy_returns_the_right_list()
     {
+        $utenteId = 1;
         $movimenti = $this->userService->listItemsToBuy($utenteId);
         $this->assertEquals(2, count($movimenti));
     }
 
     public function test_list_items_purchased_returns_the_right_list()
     {
+        $utenteId = 1;
         $movimenti = $this->userService->listItemsPurchased($utenteId);
+        $this->assertEquals(1, count($movimenti));
+    }
+
+    public function test_list_items_to_close_returns_the_right_list()
+    {
+        $utenteId = 1;
+        $movimenti = $this->userService->listItemsToClose($utenteId);
         $this->assertEquals(1, count($movimenti));
     }
 
