@@ -63,6 +63,11 @@ class Movimento
      */
     private $ticket;
 
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $idMovimentoVendita;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -163,4 +168,17 @@ class Movimento
 
         return $this;
     }
+
+    public function getIdMovimentoVendita(): ?int
+    {
+        return $this->idMovimentoVendita;
+    }
+
+    public function setIdMovimentoVendita(?int $idMovimentoVendita): self
+    {
+        $this->idMovimentoVendita = $idMovimentoVendita;
+
+        return $this;
+    }
+
 }
