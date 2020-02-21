@@ -16,6 +16,15 @@ class BarattoApiClient {
       return null;
     }
   }
+  
+  async logout(authToken) {    
+    try {
+      let response = await fetch(`/api/auth/logout?accessToken=${authToken}`);
+      let data = await response.json();      
+    } catch (err) {
+      return null;
+    }
+  }
 
   async listArticoli(authToken) {
     let headers = new Headers();

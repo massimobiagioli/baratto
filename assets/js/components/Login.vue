@@ -22,7 +22,7 @@
           </div>
         </div>
         <div class="card-action">
-          <a class="waves-effect waves-light btn" @click="login({email, password})">login</a>
+          <a class="waves-effect waves-light btn" @click="login({email, password})">login</a>          
         </div>
       </div>
     </div>

@@ -37,7 +37,7 @@ const moduleAuth = {
     async logout({
       commit
     }, payload) {
-      await barattoApiClient.logout();
+      await barattoApiClient.logout(payload.accessToken);
       commit('logout', {});
       router.push({path: "/login"});
     }

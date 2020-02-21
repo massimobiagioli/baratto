@@ -45,10 +45,10 @@
       </div>
     </div>
 
-    <!--<div>
-      <a class="waves-effect waves-light btn" @click="logout()">Logout</a>
-    </div>-->
-
+    <div class="col s12">
+      <a class="waves-effect waves-light btn" @click="logout({accessToken})">Logout</a>
+    </div>
+    
   </div>
 </template>
 
