@@ -126,7 +126,8 @@ final class UserDoctrineImpl implements UserInterface
         ];
         $movimenti = $this->movimentoRepository->findBy($criteria, ['dataOperazione' => 'DESC']);
         $movimenti = array_filter($movimenti, function ($m) use ($utenteId) {
-            return $m->getVenditore()->getId() === $utenteId;
+            $movimentoVendita = $this->movimentoRepository->findBy(['idMovimentoVendita' => $m->getId()]);
+            return $m->getVenditore()->getId() === $utenteId && !$movimentoVendita;
         });
         return $movimenti;
     }
@@ -139,7 +140,8 @@ final class UserDoctrineImpl implements UserInterface
         ];
         $movimenti = $this->movimentoRepository->findBy($criteria, ['dataOperazione' => 'DESC']);
         $movimenti = array_filter($movimenti, function ($m) use ($utenteId) {
-            return $m->getVenditore()->getId() !== $utenteId;
+          $movimentoVendita = $this->movimentoRepository->findBy(['idMovimentoVendita' => $m->getId()]);  
+          return $m->getVenditore()->getId() !== $utenteId && !$movimentoVendita;
         });
         return $movimenti;
     }
