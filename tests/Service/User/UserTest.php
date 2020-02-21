@@ -69,6 +69,16 @@ class UserTest extends TestCase
         $movimentoRepository->expects($this->any())
             ->method('findBy')
             ->will($this->returnValueMap($args));
+        
+        $args = [
+              [1, null, null, $movimento1],
+              [2, null, null, $movimento2],
+              [3, null, null, $movimento3],
+              [4, null, null, $movimento4]
+        ];
+        $movimentoRepository->expects($this->any())
+            ->method('find')
+            ->will($this->returnValueMap($args));
 
         $utenti = [];
 
