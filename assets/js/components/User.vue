@@ -69,10 +69,11 @@
               <li v-for="articoloVetrina in articoliVetrina" v-bind:key="articoloVetrina.id">
                 <div class="row">
                   <div class="col s12">
-                    <span>{{ articoloVetrina.articolo.nome }} - {{ articoloVetrina.dataOperazione.date }} - Qta: {{ articoloVetrina.quantita }}</span>
-                    <span>Venduto da {{ articoloVetrina.venditore.nome }} {{ articoloVetrina.venditore.cognome }} -  Qta:  {{ articoloVetrina.venditore.email }}</span>
-                    <span>
-                      <a class="waves-effect waves-light btn" @click="buy(articoliVetrina.id)">Compra</a>
+                    <span class="col s12">{{ articoloVetrina.articolo.nome }} - Qta: {{ articoloVetrina.quantita }}</span>
+                    <span class="col s12">Venduto da {{ articoloVetrina.venditore.nome }} {{ articoloVetrina.venditore.cognome }} -  Email:  {{ articoloVetrina.venditore.email }}</span>
+                    <span class="col s12">Presente dal: {{ articoloVetrina.dataOperazione.date }}</span>
+                    <span class="col s12">
+                      <a class="waves-effect waves-light btn" @click="buy(articoloVetrina.id)">Compra</a>
                     </span>
                   </div>
                 </div>
@@ -96,9 +97,9 @@
               <li v-for="articoloAcquistato in articoliAcquistati" v-bind:key="articoloAcquistato.id">
                 <div class="row">
                   <div class="col s12">
-                    <span>{{ articoloAcquistato.articolo.nome }} - {{ articoloAcquistato.dataOperazione.date }} - Qta: {{ articoloAcquistato.quantita }}</span>
-                    <span>Acquistato da {{ articoloAcquistato.venditore.nome }} {{ articoloAcquistato.venditore.cognome }} -  Qta:  {{ articoloAcquistato.venditore.email }}</span>
-                    <span>Ticket: <b>{{ articoloAcquistato.ticket }}</b></span>
+                    <span class="col s12">{{ articoloAcquistato.articolo.nome }} - {{ articoloAcquistato.dataOperazione.date }} - Qta: {{ articoloAcquistato.quantita }}</span>
+                    <span class="col s12">Acquistato da {{ articoloAcquistato.venditore.nome }} {{ articoloAcquistato.venditore.cognome }} -  Email:  {{ articoloAcquistato.venditore.email }}</span>
+                    <span class="col s12">Ticket: <b>{{ articoloAcquistato.ticket }}</b></span>
                   </div>
                 </div>
               </li>
@@ -111,6 +112,34 @@
       </div>
     </div>
     
+    <!-- I miei ticket -->
+    <div class="row">
+      <div class="col s12">
+        <div class="card">
+          <div class="card-content">
+            <span class="card-title">I MIEI TICKET</span>
+            <ul id="articoli_acquistati">
+              <li v-for="articoloDaEvadere in articoliDaEvadere" v-bind:key="articoloDaEvadere.id">
+                <div class="row">
+                  <div class="col s12">
+                    <span class="col s12">{{ articoloDaEvadere.articolo.nome }} - {{ articoloDaEvadere.dataOperazione.date }} - Qta: {{ articoloDaEvadere.quantita }}</span>
+                    <span class="col s12">Acquistato da {{ articoloDaEvadere.compratore.nome }} {{ articoloDaEvadere.compratore.cognome }} -  Email:  {{ articoloDaEvadere.compratore.email }}</span>
+                    <span v>Ticket: <b>{{ articoloDaEvadere.ticket }}</b></span>
+                    <span class="col s12">
+                      <a class="waves-effect waves-light btn" @click="close(articoloDaEvadere.id)">Evadi</a>
+                    </span>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+          <div class="card-action">
+            <a class="waves-effect waves-light btn" @click="listItemsToClose()">Aggiorna elenco</a>            
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="col s12">
       <a class="waves-effect waves-light btn" @click="logout({accessToken})">Logout</a>
     </div>
@@ -133,6 +162,7 @@ export default {
     movimenti: [],
     articoliVetrina: [],
     articoliAcquistati: [],
+    articoliDaEvadere: [],
     articoli: []
   }),
   async mounted() {
@@ -162,6 +192,9 @@ export default {
     async listItemsPurchased() {      
       this.articoliAcquistati = await barattoApiClient.listItemsPurchased(this.accessToken);
     },
+    async listItemsToClose() {      
+      this.articoliDaEvadere = await barattoApiClient.listItemsToClose(this.accessToken);
+    },
     async refreshResidualCoins() {      
       this.residualCoins = await barattoApiClient.residualCoins(this.accessToken);
     },
@@ -170,17 +203,22 @@ export default {
     },
     async sell() {      
       await barattoApiClient.sell(this.accessToken, this.articoloId, this.quantita);
-      await refreshAll();      
+      await this.refreshAll();      
     },
     async buy(movimentoId) {      
-      await barattoApiClient.buy(this.accessToken, this.movimentoId);
-      await refreshAll();      
+      await barattoApiClient.buy(this.accessToken, movimentoId);
+      await this.refreshAll();      
+    },
+    async close(movimentoId) {      
+      await barattoApiClient.close(this.accessToken, movimentoId);
+      await this.refreshAll();      
     },
     async refreshAll() {      
       await this.refreshResidualCoins();
       await this.listItemsToBuy();
       await this.listItemsForSale();
       await this.listItemsPurchased();
+      await this.listItemsToClose();
     }
   },
   computed: {

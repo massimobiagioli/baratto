@@ -134,9 +134,9 @@ class BarattoApiClient {
     let options = {
       method: 'POST',
       headers,
-      body: {
+      body: JSON.stringify({
         movimentoId
-      }
+      })
     };
     try {
       let response = await fetch('/api/buy', options);
@@ -153,9 +153,9 @@ class BarattoApiClient {
     let options = {
       method: 'POST',
       headers,
-      body: {
+      body: JSON.stringify({
         movimentoId
-      }
+      })
     };
     try {
       let response = await fetch('/api/close', options);
