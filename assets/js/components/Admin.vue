@@ -1,6 +1,6 @@
 <template>
   <div class="row">
-    <div class="col s12 m6">
+    <div class="col s12">
       <div class="card">
         <div class="card-content">
           <span class="card-title">Articoli</span>
@@ -9,10 +9,10 @@
               <ul id="example-1">
                 <li v-for="articolo in articoli" v-bind:key="articolo.id">
                   <div class="row">
-                    <div class="col s6 m6">
+                    <div class="col s6">
                       <span>{{ articolo.nome }} (Valore: {{ articolo.monete }} monete)</span>
                     </div>
-                    <div class="col s6 m6">
+                    <div class="col s6">
                       <span>                                  
                         <a class="waves-effect waves-light btn" @click="updateArticolo(articolo.id)">Modifica</a>
                         <a class="waves-effect waves-light btn" @click="deleteArticolo(articolo.id)">Elimina</a>
@@ -65,10 +65,12 @@ export default {
     nome: '',
     monete: 0
   }),
-  mounted() {
+  async mounted() {
     if (this.accessToken == '' || !this.allowAdmin) {
       this.$router.push({ path: "/login" });
+      return;
     }
+    await this.listArticoli();
   },
   methods: {
     ...mapActions('auth', [

@@ -114,10 +114,10 @@ class BarattoApiClient {
     let options = {
       method: 'POST',
       headers,
-      body: {
+      body: JSON.stringify({
         articoloId,
         quantita
-      }
+      })
     };
     try {
       let response = await fetch('/api/sell', options);
