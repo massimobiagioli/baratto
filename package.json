@@ -5,7 +5,7 @@
     "regenerator-runtime": "^0.13.2",
     "vue-loader": "^15.9.0",
     "vue-template-compiler": "^2.6.11",
-    "vuetify": "^2.2.14",
+    "vuetify": "^2.6.10",
     "webpack-notifier": "^1.6.0"
   },
   "dependencies": {
